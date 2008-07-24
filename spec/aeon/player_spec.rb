@@ -6,6 +6,6 @@ describe Aeon::Player do
   end
   
   it "should have a name" do
-    @player.name.should == "TestPlayer"
+    @player.name.should == "TestPlayers"
   end
 end
