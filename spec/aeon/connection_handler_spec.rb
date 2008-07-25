@@ -5,12 +5,16 @@ describe "ConnectionHandler" do
     klass = Class.new do
       include Aeon::ConnectionHandler
     end
-    @connection_handler = klass.new
+    @handler = klass.new
   end
   
   it "should respond to post_init, receive_data, unbind" do
     %w(post_init receive_data unbind).each do |meth|
-      @connection_handler.should respond_to(meth)
+      @handler.should respond_to(meth)
     end
   end
+  # 
+  # it "should prompt" do
+  #   @handler.display_prompt("Fozo").should == "\nFoo"
+  # end
 end

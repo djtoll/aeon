@@ -1,9 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+require 'socket'
+require 'thread'
 
 describe Aeon::Server do
-  it "should start EventMachine" do
-    # at the moment this is the only way I know to test that the server starts
-    EventMachine.should_receive(:run)
-    Aeon::Server.start
+  it "should accept TCP connections" do
+    server = Thread.new { Aeon::Server.start }
+    lambda { TCPSocket.new('localhost', 5000) }.should_not raise_error
+    server.exit
   end
 end
