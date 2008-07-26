@@ -4,7 +4,7 @@ class Aeon::Connector
   
   def initialize(connection)
     @connection = connection
-    @connection.prompt("What is your name, wanderer?")
+    @connection.prompt("What is your name, wanderer? > ")
     @step = :enter_username
   end
   
@@ -13,7 +13,7 @@ class Aeon::Connector
     case @step
     when :enter_username
       if player = Aeon::Player.first(:name => input)
-        @connection.prompt("OK, give me a password for #{player.name}")
+        @connection.prompt("OK, give me a password for #{player.name} > ")
         @step = :enter_password
       end
     when :enter_password
