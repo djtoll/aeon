@@ -4,17 +4,25 @@
 module Aeon::ConnectionHandler
   # Called when the client connects
   def post_init
-    
+    @connector = Aeon::Connector.new(self)
   end
   
   # Called when we receive data from the client
   def receive_data(data)
-    
+    @connector.handle_input(data)
   end
   
   # Called when the client disconnects
   def unbind
     
+  end
+  
+  def prompt(str)
+    send_data "\n#{str}"
+  end
+  
+  def display(str)
+    send_data "\n#{str}\n"
   end
 
 end

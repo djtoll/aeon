@@ -15,4 +15,10 @@ describe Aeon::Player do
     Aeon::Player.first(:name => 'TestPlayer').should == @player
   end
   
+  it "should authenticate with the correct username and password" do
+    @player = Aeon::Player.create(:name => 'TestPlayer', :password => 'secret')
+    @player.authenticate('TestPlayer', 'secret').should be_true
+    @player.authenticated?.should be_true
+  end
+  
 end

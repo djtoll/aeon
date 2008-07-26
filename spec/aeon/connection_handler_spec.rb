@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "ConnectionHandler" do
+describe Aeon::ConnectionHandler do
   before(:each) do
     klass = Class.new do
       include Aeon::ConnectionHandler
@@ -13,8 +13,15 @@ describe "ConnectionHandler" do
       @handler.should respond_to(meth)
     end
   end
-  # 
-  # it "should prompt" do
-  #   @handler.display_prompt("Fozo").should == "\nFoo"
-  # end
+  
+  it "should prompt" do
+    @handler.should_receive(:send_data).with("\nFoo")
+    @handler.prompt("Foo")
+  end
+  
+  it "should display text with a newline before & after" do
+    data = "Foo Data"
+    @handler.should_receive(:send_data).with("\n#{data}\n")
+    @handler.display(data)
+  end
 end
