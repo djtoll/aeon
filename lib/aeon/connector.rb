@@ -1,4 +1,11 @@
 # Takes new connections and logs them into a Player
+#
+# This class implements a pseudo-state machine of dubious usefulness written
+# by me. I wanted something that would clarify the states of this class (and
+# other state-based classes in the future).
+#
+# If I decide to keep this functionality, it'll be refactored into a module.
+
 class Aeon::Connector
   attr_reader :player
   
