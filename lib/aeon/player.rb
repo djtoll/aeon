@@ -8,11 +8,8 @@ class Aeon::Player
   property :updated_at, DateTime
   
   
-  def authenticate(name, password)
-    @authenticated = true if name == self.name && password == self.password
+  def self.authenticate(name, password)
+    self.first(:name => name, :password => password)
   end
-  
-  def authenticated?
-    @authenticated ||= false
-  end
+
 end

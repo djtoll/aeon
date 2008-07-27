@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Aeon::Player do
   before(:each) do
-    DataMapper.auto_migrate! # reset DB after every spec
+    DataMapper.auto_migrate! # reset DB after every test
     @player = Aeon::Player.new(:name => 'TestPlayer')
   end
   
@@ -16,9 +16,8 @@ describe Aeon::Player do
   end
   
   it "should authenticate with the correct username and password" do
-    @player = Aeon::Player.create(:name => 'TestPlayer', :password => 'secret')
-    @player.authenticate('TestPlayer', 'secret').should be_true
-    @player.authenticated?.should be_true
+    player = Aeon::Player.create(:name => 'TestPlayer', :password => 'secret')
+    Aeon::Player.authenticate('TestPlayer', 'secret').should == player
   end
   
 end

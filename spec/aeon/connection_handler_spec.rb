@@ -14,7 +14,7 @@ describe Aeon::ConnectionHandler do
     end
   end
   
-  it "should prompt" do
+  it "should prompt text with a newline before" do
     @handler.should_receive(:send_data).with("\nFoo")
     @handler.prompt("Foo")
   end

@@ -10,7 +10,7 @@ Autotest.add_hook :initialize do |at|
   }
   
   # If a spec is modified, run that spec
-  at.add_mapping(%r%^spec/.*\.rb$%) { |filename, _|
+  at.add_mapping(%r%^spec/.*_spec\.rb$%) { |filename, _|
     filename 
   }
   
