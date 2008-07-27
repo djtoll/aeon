@@ -12,6 +12,7 @@ describe Aeon::Connector do
   end
   
   it "should find an existing player using the specified username" do
+    # TODO: make non-case-sensitive?
     name = "TestPlayer"
     Aeon::Player.should_receive(:first).with(:name => name)
     @connector = Aeon::Connector.new(@client)
@@ -26,7 +27,7 @@ describe Aeon::Connector do
     @client.should be_prompted("What is your name, wanderer? > ")
   end
   
-  it "should log in a user" do
+  it "should log in a valid player" do
     player = mock("Player", :name => "TestPlayer", :password => 'secret')
     Aeon::Player.should_receive(:first).and_return(player)
     Aeon::Player.should_receive(:authenticate).and_return(player)
@@ -37,13 +38,14 @@ describe Aeon::Connector do
     @client.should be_displayed("Welcome to Aeon, TestPlayer.")
   end
   
-  it "should return to the login username prompt if log in failed" do
+  it "should return to the login username prompt if login fails" do
     player = mock("Player", :name => "TestPlayer", :password => 'secret')
     @connector = Aeon::Connector.new(@client)
     Aeon::Player.stub!(:first).and_return(player)
     @connector.handle_input(player.name)
     Aeon::Player.should_receive(:authenticate).and_return(false)
     @connector.handle_input('faulty_password')
+    @client.should be_displayed("Password Incorrect.")
     @client.should be_prompted("What is your name, wanderer? > ")
   end
   
