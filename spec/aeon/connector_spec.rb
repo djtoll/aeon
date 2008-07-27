@@ -27,23 +27,26 @@ describe Aeon::Connector do
     @client.should be_prompted("What is your name, wanderer? > ")
   end
   
-  it "should log in a valid player" do
+  it "should log in a valid player by setting the player attribute on the client connection" do
     player = mock("Player", :name => "TestPlayer", :password => 'secret')
-    Aeon::Player.should_receive(:first).and_return(player)
-    Aeon::Player.should_receive(:authenticate).and_return(player)
     @connector = Aeon::Connector.new(@client)
+    
+    Aeon::Player.stub!(:first).and_return(player)
     @connector.handle_input(player.name)
     @client.should be_prompted("OK, give me a password for #{player.name} > ")
+    
+    Aeon::Player.should_receive(:authenticate).and_return(player)
+    @client.should_receive(:player=).with(player)
     @connector.handle_input(player.password)
     @client.should be_displayed("Welcome to Aeon, TestPlayer.")
   end
   
   it "should return to the login username prompt if login fails" do
     player = mock("Player", :name => "TestPlayer", :password => 'secret')
-    @connector = Aeon::Connector.new(@client)
     Aeon::Player.stub!(:first).and_return(player)
-    @connector.handle_input(player.name)
     Aeon::Player.should_receive(:authenticate).and_return(false)
+    @connector = Aeon::Connector.new(@client)
+    @connector.handle_input(player.name)
     @connector.handle_input('faulty_password')
     @client.should be_displayed("Password Incorrect.")
     @client.should be_prompted("What is your name, wanderer? > ")

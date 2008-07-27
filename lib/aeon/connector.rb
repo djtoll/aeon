@@ -7,12 +7,7 @@
 # If I decide to keep this functionality, it'll be refactored into a module.
 
 class Aeon::Connector
-  attr_reader :player
-  
-  def initialize(connection)
-    @client = connection
-    transition_to :enter_name
-  end
+  attr_reader :current_step
   
   def self.step(step_name, &block)
     @@steps ||= []
@@ -41,6 +36,11 @@ class Aeon::Connector
   end
   
   
+  def initialize(connection)
+    @client = connection
+    transition_to :enter_name
+  end
+  
   step :enter_name do
     on_enter { @client.prompt "What is your name, wanderer? > " }
     on_input do |input|
@@ -67,7 +67,10 @@ class Aeon::Connector
   end
   
   step :logged_in do
-    on_enter { @client.display("Welcome to Aeon, #{@player.name}.") }
+    on_enter do
+      @client.display("Welcome to Aeon, #{@player.name}.")
+      @client.player = @player
+    end
   end
   
 end

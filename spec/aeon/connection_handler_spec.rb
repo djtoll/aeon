@@ -20,8 +20,24 @@ describe Aeon::ConnectionHandler do
   end
   
   it "should display text with a newline before & after" do
-    data = "Foo Data"
-    @handler.should_receive(:send_data).with("\n#{data}\n")
-    @handler.display(data)
+    @handler.should_receive(:send_data).with("\nFoo Data\n")
+    @handler.display("Foo Data")
   end
+  
+  it "should use the Connector to handle input data if no player is logged in" do
+    @connector = mock("Connector", :logged_in? => false)
+    Aeon::Connector.stub!(:new).and_return( @connector )
+    @handler.post_init # simulate client connecting
+    @connector.should_receive(:handle_input).with("Foo")
+    @handler.receive_data("Foo")
+  end
+  
+  it "should send input data to the @player if the player is set" do
+    @player = mock("Player")
+    @handler.player = @player
+    
+    @player.should_receive(:handle_input).with("Foo")
+    @handler.receive_data("Foo")
+  end
+  
 end
