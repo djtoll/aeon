@@ -3,7 +3,6 @@
 # override: post_init, receive_data, and unbind.
 
 module Aeon::ConnectionHandler
-  attr_accessor :player
   
   # Called when the client connects
   def post_init
@@ -27,6 +26,11 @@ module Aeon::ConnectionHandler
   
   
   
+  def animate(player)
+    player.animator = self
+    @player = player
+  end
+    
   def prompt(str)
     send_data "\n#{str}"
   end

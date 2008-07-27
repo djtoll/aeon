@@ -36,7 +36,7 @@ describe Aeon::Connector do
     @client.should be_prompted("OK, give me a password for #{player.name} > ")
     
     Aeon::Player.should_receive(:authenticate).and_return(player)
-    @client.should_receive(:player=).with(player)
+    @client.should_receive(:bind_to).with(player)
     @connector.handle_input(player.password)
     @client.should be_displayed("Welcome to Aeon, TestPlayer.")
   end

@@ -24,7 +24,7 @@ describe Aeon::ConnectionHandler do
     @handler.display("Foo Data")
   end
   
-  it "should use the Connector to handle input data if no player is logged in" do
+  it "should send input data to the Connector if no Player is logged in" do
     @connector = mock("Connector", :logged_in? => false)
     Aeon::Connector.stub!(:new).and_return( @connector )
     @handler.post_init # simulate client connecting
@@ -32,10 +32,9 @@ describe Aeon::ConnectionHandler do
     @handler.receive_data("Foo")
   end
   
-  it "should send input data to the @player if the player is set" do
-    @player = mock("Player")
-    @handler.player = @player
-    
+  it "should send input data to the Player if animating a Player" do
+    @player = Aeon::Player.new
+    @handler.animate(@player)
     @player.should_receive(:handle_input).with("Foo")
     @handler.receive_data("Foo")
   end

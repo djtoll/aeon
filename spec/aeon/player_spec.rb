@@ -19,5 +19,17 @@ describe Aeon::Player do
     player = Aeon::Player.create(:name => 'TestPlayer', :password => 'secret')
     Aeon::Player.authenticate('TestPlayer', 'secret').should == player
   end
+end
+
+describe Aeon::Player, "commands" do
+  before(:each) do
+    @player = Aeon::Player.new(:name => 'TestPlayer')
+    @client = MockConnection.new
+    @player.connection = @client
+  end
+  
+  it "should respond to the 'whoami' command" do
+    @player.handle_input('whoami')
+  end
   
 end

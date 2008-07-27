@@ -69,7 +69,7 @@ class Aeon::Connector
   step :logged_in do
     on_enter do
       @client.display("Welcome to Aeon, #{@player.name}.")
-      @client.player = @player
+      @client.bind_to(@player)
     end
   end
   
