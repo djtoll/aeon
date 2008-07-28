@@ -2,19 +2,17 @@ module OutputMatchers
   
   class BePrompted
     def initialize(expected)
-      @expected_output = "\n#{expected}"
+      @expected = "\n#{expected}"
     end
 
     def matches?(client)
-      @full_output = client.output
-      @last_output = client.output.last
-      
-      @last_output == @expected_output
+      @output = client.output
+      @output.last == @expected
     end
 
     def failure_message
-      msg =  "expected prompt: #{@expected_output.inspect}\n"
-      msg << "            got: #{@last_output.inspect}"
+      msg =  "expected prompt: #{@expected.inspect}\n"
+      msg << "            got: #{@output.last.inspect}"
       msg
     end
 
@@ -26,25 +24,29 @@ module OutputMatchers
   
   class BeDisplayed
     def initialize(expected)
-      @expected_output = "\n#{expected}\n"
+      @expected = "\n#{expected}\n"
     end
 
     def matches?(client)
-      @full_output = client.output
-      @last_output = client.output.last
-
-      @full_output[-2..-1].include? @expected_output
+      @client = client
+      @output = client.output
+      
+      if @output.length == 1
+        @output.include? @expected
+      else
+        @output[-2..-1].include? @expected
+      end
     end
 
     def failure_message
-      msg =  "expected display: #{@expected_output.inspect}\n"
-      msg << "   actual output:\n"
-      msg << "   ------------------------------------------"
-      msg << @full_output.join.split("\n").join("\n   >> ")
+      msg =  "expected display: #{@expected.inspect}\n"
+      msg << @client.pretty_transcript
+      msg
+      # msg << @transcript.join.split("\n").join("\n>> ")
     end
 
     def negative_failure_message
-      "didn't expect: #{@last_output.inspect}\n"
+      "didn't expect: #{@output.last.inspect}\n"
     end
   end
   

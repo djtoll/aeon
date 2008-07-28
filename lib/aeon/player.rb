@@ -12,12 +12,20 @@ class Aeon::Player
   end
   
   
-  def animator=(connection)
-    @animator = connection
+  def animator=(client)
+    @animator = client
   end
   
   def handle_input(data)
-    @connection.display "You are TestPlayer."
+    display "You are TestPlayer."
+  end
+  
+  def display(str)
+    @animator.display(str)
+  end
+  
+  def prompt(str)
+    @animator.prompt(str)
   end
 
 end

@@ -20,18 +20,45 @@ DataMapper.setup(:default, 'sqlite3::memory:')
 # that my tests can examine output easily.
 #
 # This may not be bestpractice at all and is subject to change.
-require 'spec/mocks'
-class MockClient < Spec::Mocks::Mock
+require 'colored'
+class MockClient
   include Aeon::Client
   
-  attr_reader :output
-  
-  def initialize(stubs={})
-    super("MockClient", stubs)
-    @output = []
+  attr_reader :transcript
+
+  # the transcript is an associative array of input and output
+  #   [[:input, 'foo'], [:output, 'bar']]
+  def initialize
+    @transcript = []
   end
   
+  # #output and #input search the recorded transcript
+  def output
+    @transcript.collect {|e| e[1] if e[0] == :output}.compact
+  end
+  def input
+    @transcript.collect {|e| e[1] if e[0] == :input}.compact
+  end
+  
+  # Returins a string of a nicely formatting transcript. width is 80 columns.
+  def pretty_transcript
+    msg =  "\n===============================<( TRANSCRIPT )>=================================\n".white.bold
+    @transcript.each do |e|
+      msg << "> #{e[1]}\n".yellow  if e[0] == :input
+      msg << e[1]                  if e[0] == :output
+    end
+    msg << "\n================================================================================\n".white.bold
+    msg
+  end
+  
+  # add received data to the transcript as input
+  def receive_data(data)
+    @transcript << [:input, data]
+    super(data)
+  end
+  
+  # add received data to the transcript as input
   def send_data(data)
-    @output << data
+    @transcript << [:output, data]
   end
 end

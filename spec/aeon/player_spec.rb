@@ -25,10 +25,13 @@ describe Aeon::Player, "commands" do
   before(:each) do
     @player = Aeon::Player.new(:name => 'TestPlayer')
     @client = MockClient.new
-    @player.connection = @client
+    # @player.animator = @client
+    @client.animate(@player)
   end
   
-  # it "should respond to the 'whoami' command" do
-  #   @player.handle_input('whoami')
-  # end
+  it "should display the 'whoami' command" do
+    # @player.handle_input('whoami')
+    @client.receive_data('whoami')
+    @client.should be_displayed('You are TestPlayer.')
+  end
 end
