@@ -27,17 +27,16 @@ describe Aeon::Connector do
     @client.should be_prompted("What is your name, wanderer? > ")
   end
   
-  it "should log in a valid player by setting the player attribute on the client connection" do
-    player = mock("Player", :name => "TestPlayer", :password => 'secret')
+  it "should log in a valid player and tell the client to animate it" do
+    DataMapper.auto_migrate!
+    @player    = Aeon::Player.create(:name => "TestPlayer", :password => "secret")
     @connector = Aeon::Connector.new(@client)
     
-    Aeon::Player.stub!(:first).and_return(player)
-    @connector.handle_input(player.name)
-    @client.should be_prompted("OK, give me a password for #{player.name} > ")
-    
-    Aeon::Player.should_receive(:authenticate).and_return(player)
-    @client.should_receive(:bind_to).with(player)
-    @connector.handle_input(player.password)
+    @connector.handle_input(@player.name)
+    @client.should be_prompted("OK, give me a password for #{@player.name} > ")
+
+    @client.should_receive(:animate).with(@player)
+    @connector.handle_input(@player.password)
     @client.should be_displayed("Welcome to Aeon, TestPlayer.")
   end
   

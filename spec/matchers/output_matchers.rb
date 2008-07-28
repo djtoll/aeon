@@ -6,18 +6,18 @@ module OutputMatchers
     end
 
     def matches?(client)
+      @client = client
       @output = client.output
       @output.last == @expected
     end
 
     def failure_message
-      msg =  "expected prompt: #{@expected.inspect}\n"
-      msg << "            got: #{@output.last.inspect}"
-      msg
+      msg = "expected prompt: #{@expected.inspect}\n"
+      msg << @client.pretty_transcript
     end
 
     def negative_failure_message
-      "didn't expect: #{@last_output.inspect}\n"
+      "didn't expect: #{@output.last.inspect}\n"
     end
   end
   
@@ -31,6 +31,8 @@ module OutputMatchers
       @client = client
       @output = client.output
       
+      return false if @output.nil? || @output.empty?
+      
       if @output.length == 1
         @output.include? @expected
       else
@@ -39,10 +41,8 @@ module OutputMatchers
     end
 
     def failure_message
-      msg =  "expected display: #{@expected.inspect}\n"
+      msg = "expected display: #{@expected.inspect}\n"
       msg << @client.pretty_transcript
-      msg
-      # msg << @transcript.join.split("\n").join("\n>> ")
     end
 
     def negative_failure_message

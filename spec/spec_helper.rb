@@ -24,41 +24,36 @@ require 'colored'
 class MockClient
   include Aeon::Client
   
-  attr_reader :transcript
+  attr_reader :transcript, :input, :output
 
   # the transcript is an associative array of input and output
   #   [[:input, 'foo'], [:output, 'bar']]
   def initialize
     @transcript = []
+    @output     = []
+    @input      = []
   end
   
-  # #output and #input search the recorded transcript
-  def output
-    @transcript.collect {|e| e[1] if e[0] == :output}.compact
-  end
-  def input
-    @transcript.collect {|e| e[1] if e[0] == :input}.compact
-  end
-  
-  # Returins a string of a nicely formatting transcript. width is 80 columns.
+  # Returns a string of a nicely formatted transcript. width is 80 columns.
   def pretty_transcript
-    msg =  "\n===============================<( TRANSCRIPT )>=================================\n".white.bold
-    @transcript.each do |e|
-      msg << "> #{e[1]}\n".yellow  if e[0] == :input
-      msg << e[1]                  if e[0] == :output
-    end
-    msg << "\n================================================================================\n".white.bold
+    msg =  "\n+==============================<( TRANSCRIPT )>====================================+\n".white.bold
+    # 1. split at newlines with leading & trailing whitespace removed
+    # 2. pad each line to be 80 characters, encasing them inside our box
+    msg << @transcript.join.strip.split("\n").collect! {|e| "| #{e.ljust(80)} |"}.join("\n")
+    msg << "\n+==================================================================================+\n".white.bold
     msg
   end
   
   # add received data to the transcript as input
   def receive_data(data)
-    @transcript << [:input, data]
+    @transcript << ">#{data.inspect}".yellow
+    @input << data
     super(data)
   end
   
-  # add received data to the transcript as input
+  # add received data to the transcript as output
   def send_data(data)
-    @transcript << [:output, data]
+    @transcript << data
+    @output << data
   end
 end

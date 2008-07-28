@@ -7,6 +7,6 @@ if __FILE__ == $0
   when 'tt'
     # $stdout = File.new('/dev/null', 'w')
     fork { Aeon::Server.start }
-    system 'tt++ config/tintin.config'
+    system 'tt++ config/tt++.config'
   end
 end
