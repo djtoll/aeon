@@ -14,6 +14,6 @@ module Aeon
 end
 
 require 'aeon/server'
-require 'aeon/connection_handler'
+require 'aeon/client'
 require 'aeon/player'
 require 'aeon/connector'

@@ -13,7 +13,7 @@ require 'dm-core'
 DataMapper.setup(:default, 'sqlite3::memory:')
 
 
-# MockConnection is my attempt to mock a client connection, which is normally
+# MockClient is my attempt to mock a client connection, which is normally
 # an instance of EventMachine::Connection. I'm overwriting the #send_data
 # method -- the method provided by EventMachine::Connection that actually
 # sends data to the client. Here I'm just capturing it in an output buffer so
@@ -21,13 +21,13 @@ DataMapper.setup(:default, 'sqlite3::memory:')
 #
 # This may not be bestpractice at all and is subject to change.
 require 'spec/mocks'
-class MockConnection < Spec::Mocks::Mock
-  include Aeon::ConnectionHandler
+class MockClient < Spec::Mocks::Mock
+  include Aeon::Client
   
   attr_reader :output
   
   def initialize(stubs={})
-    super("MockConnection", stubs)
+    super("MockClient", stubs)
     @output = []
   end
   

@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Aeon::Connector do
   
   before(:each) do
-    @client = MockConnection.new
+    @client = MockClient.new
   end
   
   it "should prompt for the player's username" do

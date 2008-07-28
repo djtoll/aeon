@@ -24,12 +24,11 @@ end
 describe Aeon::Player, "commands" do
   before(:each) do
     @player = Aeon::Player.new(:name => 'TestPlayer')
-    @client = MockConnection.new
+    @client = MockClient.new
     @player.connection = @client
   end
   
-  it "should respond to the 'whoami' command" do
-    @player.handle_input('whoami')
-  end
-  
+  # it "should respond to the 'whoami' command" do
+  #   @player.handle_input('whoami')
+  # end
 end

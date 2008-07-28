@@ -11,6 +11,7 @@ class Aeon::Player
     self.first(:name => name, :password => password)
   end
   
+  
   def animator=(connection)
     @animator = connection
   end

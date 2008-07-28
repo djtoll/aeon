@@ -1,42 +1,39 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe Aeon::ConnectionHandler do
+describe Aeon::Client do
   before(:each) do
-    klass = Class.new do
-      include Aeon::ConnectionHandler
-    end
-    @handler = klass.new
+    @client = MockClient.new
   end
   
   it "should respond to post_init, receive_data, unbind" do
     %w(post_init receive_data unbind).each do |meth|
-      @handler.should respond_to(meth)
+      @client.should respond_to(meth)
     end
   end
   
   it "should prompt text with a newline before" do
-    @handler.should_receive(:send_data).with("\nFoo")
-    @handler.prompt("Foo")
+    @client.should_receive(:send_data).with("\nFoo")
+    @client.prompt("Foo")
   end
   
   it "should display text with a newline before & after" do
-    @handler.should_receive(:send_data).with("\nFoo Data\n")
-    @handler.display("Foo Data")
+    @client.should_receive(:send_data).with("\nFoo Data\n")
+    @client.display("Foo Data")
   end
   
   it "should send input data to the Connector if no Player is logged in" do
     @connector = mock("Connector", :logged_in? => false)
     Aeon::Connector.stub!(:new).and_return( @connector )
-    @handler.post_init # simulate client connecting
+    @client.post_init # simulate client connecting
     @connector.should_receive(:handle_input).with("Foo")
-    @handler.receive_data("Foo")
+    @client.receive_data("Foo")
   end
   
-  it "should send input data to the Player if animating a Player" do
+  it "should send input data to the animated Player" do
     @player = Aeon::Player.new
-    @handler.animate(@player)
+    @client.animate(@player)
     @player.should_receive(:handle_input).with("Foo")
-    @handler.receive_data("Foo")
+    @client.receive_data("Foo")
   end
   
 end
