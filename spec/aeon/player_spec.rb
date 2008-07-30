@@ -21,11 +21,39 @@ describe Aeon::Player do
   end
 end
 
-describe Aeon::Player, "commands" do
+describe Aeon::Player, "when animated" do
   before(:each) do
     @player = Aeon::Player.new(:name => 'TestPlayer')
     @client = MockClient.new
     @client.animate(@player)
+  end
+  
+  it "should prompt after becoming animated" do
+    @client.should be_prompted("TestPlayer> ")
+  end
+  
+  it "should reprompt if #handle_input receives an empty string" do
+    @client.receive_data('')
+    @client.should be_prompted('TestPlayer> ')
+    @client.receive_data("\n")
+    @client.should be_prompted('TestPlayer> ')
+    @client.receive_data("\r\n")
+    @client.should be_prompted('TestPlayer> ')
+    @client.receive_data("\n\n")
+    @client.should be_prompted('TestPlayer> ')
+  end
+end
+
+describe Aeon::Player, "performing commands" do
+  before(:each) do
+    @player = Aeon::Player.new(:name => 'TestPlayer')
+    @client = MockClient.new
+    @client.animate(@player)
+  end
+  
+  it "should respond 'Huh?' to unknown commands" do
+    @client.receive_data('totally_made_up_command')
+    @client.should be_displayed('Huh?')
   end
   
   it "should display the 'whoami' command" do
