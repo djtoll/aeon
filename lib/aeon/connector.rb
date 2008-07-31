@@ -36,8 +36,9 @@ class Aeon::Connector
   end
   
   
-  def initialize(connection)
+  def initialize(connection, world)
     @client = connection
+    @world  = world
     transition_to :enter_name
   end
   
@@ -69,6 +70,7 @@ class Aeon::Connector
   step :logged_in do
     on_enter do
       @client.display("Welcome to Aeon, #{@player.name}.")
+      @world.players << @player
       @client.animate(@player)
     end
   end

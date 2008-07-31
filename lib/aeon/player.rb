@@ -20,7 +20,7 @@ class Aeon::Player
   
   def self.command(command_name, &block)
     @@commands ||= []
-    @@commands << command_name.to_s
+    @@commands <<  command_name.to_s
     define_method("cmd_#{command_name.to_s}", &block)
   end
   
@@ -36,16 +36,21 @@ class Aeon::Player
   def handle_input(data)
     data = data.strip.chomp
     return prompt if data.empty?
-    
-    matches = @@commands.grep(/#{data}/)
-    
+    execute_command(data)
+    prompt
+  end
+  
+  def execute_command(cmd)
+    matches = @@commands.grep(/#{cmd}/)
     unless matches.empty?
       send "cmd_#{matches.first}"
     else
       display 'Huh?'
     end
-    
-    prompt
+  end
+  
+  command :who do
+    display "Who List"
   end
   
   command :whoami do

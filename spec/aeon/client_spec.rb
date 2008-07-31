@@ -22,10 +22,10 @@ describe Aeon::Client do
   end
   
   it "should send input data to the Connector if no Player is logged in" do
-    @connector = mock("Connector", :logged_in? => false)
-    Aeon::Connector.stub!(:new).and_return( @connector )
+    @connector = mock("Connector")
+    Aeon::Connector.should_receive(:new).and_return(@connector)
     @client.post_init # simulate client connecting
-    @connector.should_receive(:handle_input).with("Foo")
+    @connector.should_receive(:handle_input)
     @client.receive_data("Foo")
   end
   

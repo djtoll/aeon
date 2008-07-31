@@ -10,12 +10,14 @@ module Aeon::Client
   
   # Called when the client connects
   def post_init
-    @connector = Aeon::Connector.new(self)
+    @world     = Aeon.world
+    @connector = Aeon::Connector.new(self, @world)
   end
   
   # Called when we receive data from the client
   def receive_data(data)
     # TODO: perhaps sanitize data here?
+    # send_data(data.inspect)
     if @player
       @player.handle_input(data)
     else
@@ -25,7 +27,7 @@ module Aeon::Client
   
   # Called when the client disconnects
   def unbind
-    
+    @world.disconnect(@player) if @player
   end
   
   
