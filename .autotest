@@ -1,0 +1,33 @@
+require 'autotest'
+
+Autotest.add_hook :initialize do |at|
+  at.clear_mappings
+  at.add_exception(/\.git|db|doc|log/)
+  
+  # If spec_helper is modified, run all specs
+  at.add_mapping(%r%^spec/spec_helper\.rb$%) {
+    at.files_matching %r%^spec/.*_spec\.rb$%
+  }
+  
+  # If a spec is modified, run that spec
+  at.add_mapping(%r%^spec/.*_spec\.rb$%) { |filename, _|
+    filename 
+  }
+  
+  # If a library file is modified, run {filename}_spec.rb. If there is no
+  # matching spec however, just rerun all specs.
+  at.add_mapping(%r%^lib/(.*)\.rb$%) { |_, m| 
+    match = at.files_matching %r{^spec/#{m[1]}_spec\.rb$}
+    unless match.empty?
+      match
+    else
+      at.files_matching %r%^spec/.*_spec\.rb$%
+    end
+  }
+  
+  # Last priority: Rerun all specs for any file not matched by the above.
+  # This still excludes the files specified by add_exception, of course.
+  at.add_mapping(%r%(.*)%) { |_, m|
+    at.files_matching %r%^spec/.*_spec\.rb$%
+  }
+end

@@ -54,7 +54,7 @@ describe Aeon::Connector, "when logging in a player" do
     @client.should be_displayed("Welcome to Aeon, TestPlayer.")
   end
   
-  it "should add the player to the world's player array" do
+  it "should add the player to the world's player registry" do
     @player    = Aeon::Player.create(:name => "TestPlayer", :password => "secret")
     @connector = Aeon::Connector.new(@client, @world)
     lambda {
