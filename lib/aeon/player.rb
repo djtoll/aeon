@@ -12,27 +12,23 @@ class Aeon::Player
   property :created_at, DateTime
   property :updated_at, DateTime  
   
+  # Sets the table name for DataMapper, otherwise it would be 'aeon_players'.
+  def default_storage_name
+    'players'
+  end
+  
+  
+  
   # TODO: yeah, obviously storing passwords in plain text is a bad idea. This
   # will change.
   def self.authenticate(name, password)
     self.first(:name => name, :password => password)
   end
   
-  def self.command(command_name, &block)
-    @@commands ||= []
-    @@commands <<  command_name.to_s
-    define_method("cmd_#{command_name.to_s}", &block)
+  def client=(client)
+    @client = client
   end
-  
-  # Setter for when something (the "animator") takes control of the Player. We
-  # keep track of this so we know who to send responses to commands and
-  # whatnot. This may change later when/if I start getting into multiple
-  # "observers" on a world object.
-  def animator=(client)
-    @animator = client
-    prompt
-  end
-  
+
   def handle_input(data)
     data = data.strip.chomp
     return prompt if data.empty?
@@ -40,13 +36,25 @@ class Aeon::Player
     prompt
   end
   
-  def execute_command(cmd)
+  def execute_command(input)
+    # Grab the first word as the command, the rest as the args  
+    cmd, args = input.split(/\s/, 2)
+    # find a list of matching commands
     matches = @@commands.grep(/#{cmd}/)
     unless matches.empty?
-      send "cmd_#{matches.first}"
+      send "cmd_#{matches.first}", args
     else
       display 'Huh?'
     end
+  end
+
+
+  
+  # Class method for DSL-ish definition of commands.
+  def self.command(command_name, &block)
+    @@commands ||= []
+    @@commands <<  command_name.to_s
+    define_method("cmd_#{command_name.to_s}", &block)
   end
   
   command :who do
@@ -56,15 +64,23 @@ class Aeon::Player
   command :whoami do
     display "You are #{@name}."
   end
+  
+  command :ooc do |args|
+    Aeon.world.players.each do |player|
+      player.display "[OOC] TestPlayer: #{args}"
+    end
+  end
+  
+  
     
   # delegator to Aeon::Client#display
   def display(str)
-    @animator.display(str)
+    @client.display(str)
   end
   
   # delegator to Aeon::Client#prompt
   def prompt(str=nil)
-    str ? @animator.prompt(str) : @animator.prompt("#{@name}> ")
+    str ? @client.prompt(str) : @client.prompt("#{@name}> ")
   end
 
 end

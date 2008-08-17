@@ -21,11 +21,12 @@ describe Aeon::Player do
   end
 end
 
-describe Aeon::Player, "when animated" do
+describe Aeon::Player, "when logged in" do
   before(:each) do
     @player = Aeon::Player.new(:name => 'TestPlayer')
     @client = MockClient.new
-    @client.animate(@player)
+    @client.post_init # simulate client connecting
+    @client.login(@player)
   end
   
   it "should prompt after becoming animated" do
@@ -48,7 +49,7 @@ describe Aeon::Player, "performing commands" do
   before(:each) do
     @player = Aeon::Player.new(:name => 'TestPlayer')
     @client = MockClient.new
-    @client.animate(@player)
+    @client.login(@player)
   end
   
   it "should respond 'Huh?' to unknown commands" do
@@ -60,4 +61,26 @@ describe Aeon::Player, "performing commands" do
     @client.receive_data('whoami')
     @client.should be_displayed('You are TestPlayer.')
   end
+
+  it "should run the 'ooc' command with args" do
+    @player.should_receive('cmd_ooc').with('test message')
+    @client.receive_data('ooc test message')
+  end
+  
+  it "should broadcast OOC to all players listening to it" do
+    @player2 = Aeon::Player.new(:name => 'TestPlayer2')
+    @client2 = MockClient.new
+    @client2.login(@player2)
+    
+    @client.receive_data('ooc test message')
+    
+    @client.should  be_displayed('[OOC] TestPlayer: test message')
+    @client2.should be_displayed('[OOC] TestPlayer: test message')
+  end
+
 end
+
+
+
+
+

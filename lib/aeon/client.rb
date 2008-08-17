@@ -31,10 +31,15 @@ module Aeon::Client
   end
   
   
-  
-  def animate(player)
-    player.animator = self
+  # Logs a client into a player.
+  # TODO: this needs to check to see if the player is already logged in. If so
+  # we need to let the player (and probably those in the same room) know.
+  def login(player)
+    player.client = self
+    @world.connect(player)
     @player = player
+    display "Welcome to Aeon, #{@player.name}."
+    @player.prompt
   end
     
   def prompt(str)

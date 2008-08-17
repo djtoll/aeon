@@ -29,9 +29,17 @@ describe Aeon::Client do
     @client.receive_data("Foo")
   end
   
-  it "should send input data to the animated Player" do
+  it "should login a player and add them to the World's player registry" do
+    @player = Aeon::Player.new(:name => "TestPlayer")
+    lambda {
+      @client.login(@player)
+    }.should change(Aeon.world.players, :length).by(1)
+    @client.should be_displayed("Welcome to Aeon, TestPlayer.")
+  end
+  
+  it "should send input data to the logged in Player" do
     @player = Aeon::Player.new
-    @client.animate(@player)
+    @client.login(@player)
     @player.should_receive(:handle_input).with("Foo")
     @client.receive_data("Foo")
   end

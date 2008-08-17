@@ -4,7 +4,7 @@
 # sends data to the client. Here I'm just capturing it in an output buffer so
 # that my tests can examine output easily.
 #
-# This may not be bestpractice at all and is subject to change.
+# This may not be best practice at all and is subject to change.
 require 'colored'
 class MockClient
   include Aeon::Client
@@ -17,6 +17,7 @@ class MockClient
     @transcript = []
     @output     = []
     @input      = []
+    post_init
   end
   
   # Returns a string of a nicely formatted transcript. Width is 80 columns,

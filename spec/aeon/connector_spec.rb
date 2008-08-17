@@ -45,22 +45,12 @@ describe Aeon::Connector, "when logging in a player" do
     @client.should be_prompted("What is your name, wanderer? > ")
   end
   
-  it "should log in a valid player and tell the client to animate it" do
+  it "should log in a valid player" do
     @player    = Aeon::Player.create(:name => "TestPlayer", :password => "secret")
     @connector = Aeon::Connector.new(@client, @world)
-    @client.should_receive(:animate).with(@player)  
+    @client.should_receive(:login).with(@player)  
     @connector.handle_input(@player.name)
     @connector.handle_input(@player.password)
-    @client.should be_displayed("Welcome to Aeon, TestPlayer.")
-  end
-  
-  it "should add the player to the world's player registry" do
-    @player    = Aeon::Player.create(:name => "TestPlayer", :password => "secret")
-    @connector = Aeon::Connector.new(@client, @world)
-    lambda {
-      @connector.handle_input(@player.name)
-      @connector.handle_input(@player.password)
-    }.should change(@world.players, :length).by(1)
   end
   
 end
