@@ -41,7 +41,9 @@ module Aeon::Client
     display "Welcome to Aeon, #{@player.name}."
     @player.prompt
   end
-    
+  
+  
+  
   def prompt(str)
     send_data "\n#{str}"
   end

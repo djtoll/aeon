@@ -15,4 +15,10 @@ namespace :db do
   task :migrate do
     DataMapper.auto_migrate!
   end
+  
+  desc "Auto migrate the DB and reload the development world in db/world.rb"
+  task :reload do
+    DataMapper.auto_migrate!
+    Kernel.load('db/world.rb')
+  end
 end

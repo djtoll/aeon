@@ -12,11 +12,15 @@ class Aeon::Player
   property :created_at, DateTime
   property :updated_at, DateTime  
   
-  # Sets the table name for DataMapper, otherwise it would be 'aeon_players'.
-  def default_storage_name
-    'players'
+  has 1, :character
+  
+  # Creates an associated Character with a new player unless assigned manually.
+  before :create do
+    self.character = Aeon::Character.new(:name => self.name) unless self.character
   end
   
+  # Override DM's table name, which would have been "aeon_players"
+  @storage_names[:default] = "players"
   
   
   # TODO: yeah, obviously storing passwords in plain text is a bad idea. This
@@ -25,17 +29,20 @@ class Aeon::Player
     self.first(:name => name, :password => password)
   end
   
+  # Setter called when a Client logs into this Player.
   def client=(client)
     @client = client
   end
 
+  # Entry point for input from the Client. Do some cleanup on the input and
+  # react to it.
   def handle_input(data)
     data = data.strip.chomp
     return prompt if data.empty?
     execute_command(data)
-    prompt
   end
   
+  # Searches the list of commands for a matching one and executes it.
   def execute_command(input)
     # Grab the first word as the command, the rest as the args  
     cmd, args = input.split(/\s/, 2)
@@ -58,7 +65,10 @@ class Aeon::Player
   end
   
   command :who do
-    display "Who List"
+    msg =  "Online Players:\n"
+    msg << "---------------\n"
+    msg << Aeon.world.players.inject('') {|memo, p| memo << "#{p.name}\n"}
+    display msg
   end
   
   command :whoami do
@@ -71,14 +81,21 @@ class Aeon::Player
     end
   end
   
-  
-    
-  # delegator to Aeon::Client#display
-  def display(str)
-    @client.display(str)
+  command :quit do
+    display "Goodbye!", false
+    @client.close_connection_after_writing
   end
   
-  # delegator to Aeon::Client#prompt
+  
+    
+  # Delegator to Aeon::Client#display
+  # We also reprompt after each display unless told otherwise
+  def display(str, reprompt=true)
+    @client.display(str)
+    prompt if reprompt
+  end
+  
+  # Delegator to Aeon::Client#prompt
   def prompt(str=nil)
     str ? @client.prompt(str) : @client.prompt("#{@name}> ")
   end

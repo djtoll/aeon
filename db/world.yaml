@@ -1,0 +1,12 @@
+Player:
+  -
+    id: 1
+    name: TestPlayer
+    password: secret
+
+Room:
+  -
+    id: 1
+    name: A Test Room
+    description: You are in the test room.
+    

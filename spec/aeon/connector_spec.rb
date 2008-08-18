@@ -29,6 +29,8 @@ describe Aeon::Connector, "when logging in a player" do
     @client.should be_prompted("What is your name, wanderer? > ")
   end
   
+  it "should ask to create a new character if no character found"
+  
   it "should prompt for the player's password" do
     @player    = Aeon::Player.create(:name => "TestPlayer", :password => "secret")
     @connector = Aeon::Connector.new(@client, @world)
