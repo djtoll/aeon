@@ -27,6 +27,17 @@ describe Aeon::Character do
     @character.room.should == Aeon::Room.first
   end
   
+  it "should move to another room" do
+    @room = Aeon::Room.create(:name => "Test Room")
+    @room_east = Aeon::Room.create(:name => "East Room")
+    @room.stub!(:east).and_return(@room_east)
+    
+    @character.animator = mock("Player", :display => true)
+    @character.room = @room
+    @character.move(:east)
+    @character.room.should == @room_east
+  end
+  
   describe "#say" do
     it "should show the player the result" do
       @player.animate(@character)

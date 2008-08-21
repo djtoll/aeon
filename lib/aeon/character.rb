@@ -25,4 +25,9 @@ class Aeon::Character
     @animator.display("#{self.name} says, \"#{str}\"")
   end
   
+  def move(direction)
+    @animator.display("You move #{direction}.")
+    self.room = self.room.send(direction)
+  end
+  
 end

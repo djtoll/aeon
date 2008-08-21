@@ -18,7 +18,7 @@ class Aeon::Room
   # Override DM's table name, which would have been "aeon_rooms"
   @storage_names[:default] = "rooms"
   
-  OPPOSITE = {
+  OPPOSITES = {
     :north => :south,
     :south => :north,
     :east  => :west,
@@ -28,25 +28,28 @@ class Aeon::Room
   # Set up a getter for each direction that returns the linked room.
   %w(north east south west).each do |direction|
     class_eval <<-EOF
-      # Return the cached value of this room's #{direction}-linked room, or 
-      # look it up in the DB if it's set. Returns nil if no room is linked.
+      # Return the room linked to this room to the #{direction}.
       def #{direction}
         @#{direction} ||= (Aeon::Room[#{direction}_id] if #{direction}_id)
       end
     EOF
   end
-    
+  
+  # Link this room to another room in the specified direction.
+  #
+  # FIXME: This feels a bit hackish, especially using instance_variable_set.
+  # At the moment I can't really think of a cleaner solution.
   def link_with(room, direction)
     return false if exits.include?(room)
     # First we set an instance variable with the name of the direction on both rooms.
     self.instance_variable_set("@#{direction}", room)
-    room.instance_variable_set("@#{OPPOSITE[direction]}", self)
+    room.instance_variable_set("@#{OPPOSITES[direction]}", self)
     # Ensure that both rooms have an ID so that we can make the linkage in the DB.
     self.save if self.new_record?
     room.save if room.new_record?
     # Then we set the <direction>_id of each room so the linkage can be persisted to the DB.
     self.update_attributes("#{direction}_id" => room.id)
-    room.update_attributes("#{OPPOSITE[direction]}_id" => self.id)
+    room.update_attributes("#{OPPOSITES[direction]}_id" => self.id)
   end
   
   # Returns rooms that this room is linked to as an array of room in the form of:

@@ -93,11 +93,15 @@ class Aeon::Player
     @client.close_connection_after_writing
   end
   
-  # command :look do
-  #   str =  "#{self.character.room.name}\n"
-  #   str << "#{self.character.room.description}"
-  #   display str
-  # end 
+  command :east do
+    @animated_object.move(:east)
+  end
+  
+  command :look do
+    str =  "#{self.character.room.name}\n"
+    str << "#{self.character.room.description}"
+    display str
+  end 
   
   
     
