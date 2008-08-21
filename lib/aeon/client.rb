@@ -3,11 +3,7 @@
 # override: post_init, receive_data, and unbind.
 
 module Aeon::Client
-  
-  def initialize(*args)
-    super(*args)
-  end
-  
+
   # Called when the client connects
   def post_init
     @world     = Aeon.world
@@ -31,14 +27,16 @@ module Aeon::Client
   end
   
   
-  # Logs a client into a player.
+  # Logs a client into a player and tells the player to animate its character.
+  #
   # TODO: this needs to check to see if the player is already logged in. If so
   # we need to let the player (and probably those in the same room) know.
-  def login(player)
-    player.client = self
-    @world.connect(player)
+  def login_to_player(player)
     @player = player
+    @player.client = self
+    @player.animate
     display "Welcome to Aeon, #{@player.name}."
+    @world.connect(player)
     @player.prompt
   end
   

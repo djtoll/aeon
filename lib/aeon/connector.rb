@@ -72,7 +72,7 @@ class Aeon::Connector
   
   step :logged_in do
     on_enter do
-      @client.login(@player)
+      @client.login_to_player(@player)
     end
   end
   

@@ -1,7 +1,5 @@
 # The Player class acts as an interface between the human player and the MUD
-# character that he/she controls. Later I'm betting that I'll abstract a lot
-# of these methods into some kind of base class for any controllable world
-# object.
+# character (Aeon::Character) that he/she controls.
 
 class Aeon::Player
   include DataMapper::Resource
@@ -14,13 +12,12 @@ class Aeon::Player
   
   has 1, :character
   
-  # Creates an associated Character with a new player unless assigned manually.
-  before :create do
-    self.character = Aeon::Character.new(:name => self.name) unless self.character
-  end
-  
   # Override DM's table name, which would have been "aeon_players"
   @storage_names[:default] = "players"
+  
+  
+  attr_accessor :client
+  attr_reader   :animated_object
   
   
   # TODO: yeah, obviously storing passwords in plain text is a bad idea. This
@@ -29,9 +26,18 @@ class Aeon::Player
     self.first(:name => name, :password => password)
   end
   
-  # Setter called when a Client logs into this Player.
-  def client=(client)
-    @client = client
+  # Animate is the method that actually gives a Player control over a game
+  # object (usually their Character). Commands that have actual effects in the
+  # game world will be filtered through whatever object the player is
+  # animating.
+  def animate(object=self.character)
+    @animated_object = object
+    object.animator  = self
+  end
+  
+  def deanimate(object=self.character)
+    @animated_object = nil
+    object.animator  = nil
   end
 
   # Entry point for input from the Client. Do some cleanup on the input and
@@ -83,8 +89,15 @@ class Aeon::Player
   
   command :quit do
     display "Goodbye!", false
+    deanimate
     @client.close_connection_after_writing
   end
+  
+  # command :look do
+  #   str =  "#{self.character.room.name}\n"
+  #   str << "#{self.character.room.description}"
+  #   display str
+  # end 
   
   
     

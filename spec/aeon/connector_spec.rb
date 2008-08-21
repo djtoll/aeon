@@ -50,7 +50,7 @@ describe Aeon::Connector, "when logging in a player" do
   it "should log in a valid player" do
     @player    = Aeon::Player.create(:name => "TestPlayer", :password => "secret")
     @connector = Aeon::Connector.new(@client, @world)
-    @client.should_receive(:login).with(@player)  
+    @client.should_receive(:login_to_player).with(@player)  
     @connector.handle_input(@player.name)
     @connector.handle_input(@player.password)
   end

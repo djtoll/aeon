@@ -20,13 +20,7 @@ describe Aeon::Player do
     Aeon::Player.authenticate('TestPlayer', 'secret').should == player
   end
   
-  it "should create an associated Character on create" do
-    @player.save
-    @player.character.should be_an_instance_of(Aeon::Character)
-    @player.id.should == @player.character.player_id
-  end
-  
-  it "should also allow an associated character to be manually assigned" do
+  it "should also allow an associated character to be assigned" do
     char = Aeon::Character.new(:name => "TestCharacter")
     @player.character = char
     @player.save
@@ -36,16 +30,20 @@ end
 
 describe Aeon::Player, "logging in" do
   before(:each) do
-    @player = Aeon::Player.new(:name => 'TestPlayer')
+    @player = Aeon::Player.new(
+      :name => 'TestPlayer', 
+      :character => Aeon::Character.new(:name => 'TestPlayer')
+    )
     @client = MockClient.new
-    @client.login(@player)
   end
   
   it "should prompt after login" do
+    @client.login_to_player(@player)
     @client.should be_prompted("TestPlayer> ")
   end
   
   it "should reprompt if #handle_input receives an empty string" do
+    @client.login_to_player(@player)
     @client.receive_data('')
     @client.should be_prompted('TestPlayer> ')
     @client.receive_data("\n")
@@ -57,13 +55,21 @@ describe Aeon::Player, "logging in" do
   end
   
   it "should place the player in an initial room"
+  
+  it "should animate their character" do
+    @player.should_receive(:animate)
+    @client.login_to_player(@player)
+  end
 end
 
 describe Aeon::Player, "commands" do
   before(:each) do
-    @player = Aeon::Player.new(:name => 'TestPlayer')
+    @player = Aeon::Player.new(
+      :name => 'TestPlayer', 
+      :character => Aeon::Character.new
+    )
     @client = MockClient.new
-    @client.login(@player)
+    @client.login_to_player(@player)
   end
   
   it "should respond 'Huh?' to unknown commands" do
@@ -88,9 +94,12 @@ describe Aeon::Player, "commands" do
   end
   
   it "should broadcast OOC to all players" do
-    @player2 = Aeon::Player.new(:name => 'TestPlayer2')
+    @player2 = Aeon::Player.new(
+      :name => 'TestPlayer2',
+      :character => Aeon::Character.new(:name => "TestPlayer2")
+    )
     @client2 = MockClient.new
-    @client2.login(@player2)
+    @client2.login_to_player(@player2)
     
     @client.receive_data('ooc test message')
     
@@ -99,6 +108,19 @@ describe Aeon::Player, "commands" do
   end
   
   it "should only broadcast OOC to players 'subscribed' to it."
+  
+  it "should animate a character" do
+    @player.animate
+    @player.character.animator.should == @player
+    @player.animated_object.should == @player.character
+  end
+  
+  it "should deanimate a character" do
+    @player.animate
+    @player.deanimate
+    @player.animated_object.should == nil
+    @player.character.animator.should == nil
+  end
 
 end
 
