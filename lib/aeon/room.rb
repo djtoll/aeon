@@ -69,8 +69,10 @@ class Aeon::Room
     list
   end
   
+  FOO = "bobsss"
+  
   def full_description
-    str =  "#{name}\n"
+    str =  "#{name}\n #{FOO}"
     str << "#{description}\n"
     str << "Exits: #{exit_list.join(', ')}"
   end

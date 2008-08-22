@@ -8,4 +8,8 @@ class Aeon::Logger
     Aeon.world.broadcast("[ERROR] #{msg}")
   end
   
+  def debug(msg)
+    Aeon.world.broadcast("[DEBUG] #{msg}")
+  end
+  
 end

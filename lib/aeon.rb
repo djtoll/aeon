@@ -14,6 +14,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) unless
 module Aeon; end # Initialize the Aeon namespace.
 
 require 'aeon/logger'
+require 'aeon/reloader'
 require 'aeon/server'
 require 'aeon/client'
 require 'aeon/connector'
@@ -22,10 +23,18 @@ require 'aeon/room'
 require 'aeon/character'
 require 'aeon/player'
 
+# Set the Reloader up to observe these files.
+Aeon::Reloader.observe_files do |r|
+  r.observe 'aeon/world'
+  r.observe 'aeon/room'
+  r.observe 'aeon/character'
+  r.observe 'aeon/player'
+end
+
 module Aeon
   class << self
     attr_reader   :world  # Global instance of the World object
-    attr_reader   :logger # Global instance of the logger
+    attr_reader   :logger # Global instance of the Logger
     attr_accessor :mode   # Accessor for Aeon's run mode, e.g :development, :test, :production
   end
   @world  = Aeon::World.new
