@@ -17,7 +17,7 @@ class Aeon::Player
   
   
   attr_accessor :client
-  attr_reader   :animated_object
+  attr_accessor   :animated_object
   
   
   # TODO: yeah, obviously storing passwords in plain text is a bad idea. This
@@ -31,6 +31,7 @@ class Aeon::Player
   # game world will be filtered through whatever object the player is
   # animating.
   def animate(object=self.character)
+    raise "Can't animate nil object." if object.nil?
     @animated_object = object
     object.animator  = self
   end
@@ -98,9 +99,7 @@ class Aeon::Player
   end
   
   command :look do
-    str =  "#{self.character.room.name}\n"
-    str << "#{self.character.room.description}"
-    display str
+    display @animated_object.room.full_description
   end 
   
   

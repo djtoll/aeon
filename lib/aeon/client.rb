@@ -4,6 +4,8 @@
 
 module Aeon::Client
 
+  attr_reader :player
+  
   # Called when the client connects
   def post_init
     @world     = Aeon.world
@@ -33,10 +35,11 @@ module Aeon::Client
   # we need to let the player (and probably those in the same room) know.
   def login_to_player(player)
     @player = player
+    
     @player.client = self
     @player.animate
+    @world.connect(@player)
     display "Welcome to Aeon, #{@player.name}."
-    @world.connect(player)
     @player.prompt
   end
   

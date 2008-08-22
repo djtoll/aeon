@@ -123,8 +123,3 @@ describe Aeon::Player, "commands" do
   end
 
 end
-
-
-
-
-

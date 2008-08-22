@@ -46,10 +46,13 @@ class Aeon::Connector
   end
   
   step :enter_name do
-    on_enter { @client.prompt "What is your name, wanderer? > " }
-    on_input do |input|
-      if Aeon::Player.first(:name => input)
-        @player_name = input
+    on_enter do
+      @client.prompt "What is your name, wanderer? > " 
+    end
+    
+    on_input do |name|
+      if Aeon::Player.first(:name => name)
+        @player_name = name
         transition_to :enter_password
       else
         @client.display("No player found by that name.")
@@ -59,9 +62,12 @@ class Aeon::Connector
   end
   
   step :enter_password do
-    on_enter { @client.prompt "OK, give me a password for #{@player_name} > " }
-    on_input do |input|
-      if @player = Aeon::Player.authenticate(@player_name, input)
+    on_enter do
+      @client.prompt "OK, give me a password for #{@player_name} > "
+    end
+    
+    on_input do |password|
+      if @player = Aeon::Player.authenticate(@player_name, password)
         transition_to :logged_in
       else
         @client.display("Password Incorrect.")

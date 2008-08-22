@@ -30,7 +30,7 @@ class Aeon::Room
     class_eval <<-EOF
       # Return the room linked to this room to the #{direction}.
       def #{direction}
-        @#{direction} ||= (Aeon::Room[#{direction}_id] if #{direction}_id)
+        @#{direction} ||= (Aeon::Room.get(#{direction}_id) if #{direction}_id)
       end
     EOF
   end
@@ -38,7 +38,9 @@ class Aeon::Room
   # Link this room to another room in the specified direction.
   #
   # FIXME: This feels a bit hackish, especially using instance_variable_set.
-  # At the moment I can't really think of a cleaner solution.
+  # At the moment I can't really think of a cleaner solution. It would be nice
+  # to be able to do this using DM's 1-to-1 associations, but attempts at that
+  # have failed.
   def link_with(room, direction)
     return false if exits.include?(room)
     # First we set an instance variable with the name of the direction on both rooms.
@@ -56,6 +58,21 @@ class Aeon::Room
   #   [n, e, s, w]
   def exits
     [north, east, south, west]
+  end
+  
+  def exit_list
+    list =  []
+    list << 'north' if exits[0]
+    list << 'east'  if exits[1]
+    list << 'south' if exits[2]
+    list << 'west'  if exits[3]
+    list
+  end
+  
+  def full_description
+    str =  "#{name}\n"
+    str << "#{description}\n"
+    str << "Exits: #{exit_list.join(', ')}"
   end
   
 end

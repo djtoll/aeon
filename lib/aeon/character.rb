@@ -22,7 +22,7 @@ class Aeon::Character
   end
   
   def say(str)
-    @animator.display("#{self.name} says, \"#{str}\"")
+    @animator.display(%{#{self.name} says, "#{str}"})
   end
   
   def move(direction)

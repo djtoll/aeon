@@ -26,18 +26,20 @@ class MockClient
   # Here's an example of what that looks like:
   #
   #   +==============================<( TRANSCRIPT )>====================================+
-  #   | What is your name, wanderer? > "TestPlayer\n"                                    |
-  #   | No player found by that name.                                                    |
-  #   |                                                                                  |
-  #   | What is your name, wanderer? >                                                   |
+  #   | What is your name, wanderer? > "TestPlayer\n"                                    
+  #   | No player found by that name.                                                    
+  #   |                                                                                  
+  #   | What is your name, wanderer? >                                                   
   #   +==================================================================================+
   #
   def pretty_transcript
-    msg =  "\n+==============================<( TRANSCRIPT )>====================================+\n".white.bold
-    # 1. split at newlines with leading & trailing whitespace removed
-    # 2. pad each line to be 80 characters, encasing them inside our box
-    msg << @transcript.join.strip.split("\n").collect! {|e| "| #{e.ljust(80)} |"}.join("\n")
-    msg << "\n+==================================================================================+\n".white.bold
+    msg =  "\n<==============================<( TRANSCRIPT )>====================================>\n".white.bold
+    # Join the transcript and strip any leading or trailing whitespace.
+    # IMPORTANT: We're also inserting a "|" at each newline. This is actually
+    # necessary for this to be output in Autotest, because it chokes if there
+    # are blank lines and ends up not correctly reporting failed tests.
+    msg << "| " << @transcript.join.strip.split("\n").join("\n| ")
+    msg << "\n<==================================================================================>\n".white.bold
     msg
   end
   

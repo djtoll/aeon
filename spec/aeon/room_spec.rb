@@ -15,7 +15,7 @@ describe Aeon::Room do
   it "should link to another room" do     
     @room.link_with(@room_north, :north)
   
-    @room.north.should  == @room_north
+    @room.north.should == @room_north
     @room_north.south.should == @room
     
     @room.north_id.should == @room_north.id
