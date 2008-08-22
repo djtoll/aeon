@@ -3,6 +3,7 @@ require 'spec'
 
 # require the Aeon library
 require File.dirname(__FILE__) + '/../lib/aeon'
+Aeon.mode = :test
 
 # matchers
 require File.dirname(__FILE__) + '/matchers/output_matchers'

@@ -13,6 +13,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) unless
 
 module Aeon; end # Initialize the Aeon namespace.
 
+require 'aeon/logger'
 require 'aeon/server'
 require 'aeon/client'
 require 'aeon/connector'
@@ -23,8 +24,10 @@ require 'aeon/player'
 
 module Aeon
   class << self
-    attr_reader :world
+    attr_reader   :world  # Global instance of the World object
+    attr_reader   :logger # Global instance of the logger
+    attr_accessor :mode   # Accessor for Aeon's run mode, e.g :development, :test, :production
   end
-  @world = Aeon::World.new
-  puts "Initialized Aeon World: #{@world.inspect}"
+  @world  = Aeon::World.new
+  @logger = Aeon::Logger.new
 end

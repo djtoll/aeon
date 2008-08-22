@@ -21,6 +21,10 @@ module Aeon::Client
     else
       @connector.handle_input(data)  
     end
+  rescue => e
+    # We want errors to be raised when Aeon is in test mode.
+    raise e if Aeon.mode == :test
+    Aeon.logger.error(e)
   end
   
   # Called when the client disconnects

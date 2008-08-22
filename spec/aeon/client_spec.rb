@@ -38,10 +38,6 @@ describe Aeon::Client do
     @client.should be_displayed("Welcome to Aeon, TestPlayer.")
   end
   
-  it "should tell the Player to animate its character on login" do
-    
-  end
-  
   it "should send input data to the logged in Player" do
     @player = Aeon::Player.new
     @player.stub!(:animate)

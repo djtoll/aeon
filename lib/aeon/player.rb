@@ -17,7 +17,7 @@ class Aeon::Player
   
   
   attr_accessor :client
-  attr_accessor   :animated_object
+  attr_accessor :animated_object
   
   
   # TODO: yeah, obviously storing passwords in plain text is a bad idea. This
@@ -27,15 +27,14 @@ class Aeon::Player
   end
   
   # Animate is the method that actually gives a Player control over a game
-  # object (usually their Character). Commands that have actual effects in the
-  # game world will be filtered through whatever object the player is
-  # animating.
+  # object (usually their Character).
   def animate(object=self.character)
     raise "Can't animate nil object." if object.nil?
     @animated_object = object
     object.animator  = self
   end
   
+  # Stop controlling the currently animated object.
   def deanimate(object=self.character)
     @animated_object = nil
     object.animator  = nil
@@ -101,6 +100,10 @@ class Aeon::Player
   command :look do
     display @animated_object.room.full_description
   end 
+  
+  command :raise do
+    raise "Fake Error, raised by #{name}."
+  end
   
   
     

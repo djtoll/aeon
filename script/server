@@ -1,11 +1,13 @@
 #!/usr/bin/env ruby
 require File.dirname(__FILE__) + '/../lib/aeon'
 
+# Running with the "tt" option will launch tt++ using config/tt++.config 
+
 if __FILE__ == $0
   case ARGV.first
   when nil
+    Aeon.mode = :development
     Aeon::Server.start
-  # Running with the "tt" option will launch tt++ using config/tt++.config 
   when 'tt'
     # $stdout = File.new('/dev/null', 'w')
     fork { Aeon::Server.start }
