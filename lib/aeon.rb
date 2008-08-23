@@ -23,13 +23,15 @@ require 'aeon/room'
 require 'aeon/character'
 require 'aeon/player'
 
-# Set the Reloader up to observe these files.
-Aeon::Reloader.observe_files do |r|
-  r.observe 'aeon/world'
-  r.observe 'aeon/room'
-  r.observe 'aeon/character'
-  r.observe 'aeon/player'
-end
+# NOTE: turns out the reloader was a bad idea.
+#
+# Set the Reloader up to observe these files:
+# Aeon::Reloader.observe_files do |r|
+#   r.observe 'aeon/world'
+#   r.observe 'aeon/room'
+#   r.observe 'aeon/character'
+#   r.observe 'aeon/player'
+# end
 
 module Aeon
   class << self

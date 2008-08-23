@@ -68,11 +68,9 @@ class Aeon::Room
     list << 'west'  if exits[3]
     list
   end
-  
-  FOO = "bobsss"
-  
+
   def full_description
-    str =  "#{name}\n #{FOO}"
+    str =  "#{name}\n"
     str << "#{description}\n"
     str << "Exits: #{exit_list.join(', ')}"
   end

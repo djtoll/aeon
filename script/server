@@ -2,15 +2,15 @@
 require File.dirname(__FILE__) + '/../lib/aeon'
 
 # Running with the "tt" option will launch tt++ using config/tt++.config 
+  
+Aeon.mode = :development
 
-if __FILE__ == $0
-  case ARGV.first
-  when nil
-    Aeon.mode = :development
-    Aeon::Server.start
-  when 'tt'
-    # $stdout = File.new('/dev/null', 'w')
-    fork { Aeon::Server.start }
-    system 'tt++ config/tt++.config'
-  end
+case ARGV.first
+when nil
+  Aeon::Server.start
+when 'tt'
+  # Fork running the server off into a new process, so that we can replace
+  # this process with a tt++ session. ... Hey, it works.
+  fork { Aeon::Server.start }
+  system 'tt++ config/tt++.config'
 end

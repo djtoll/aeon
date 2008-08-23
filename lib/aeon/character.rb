@@ -17,9 +17,12 @@ class Aeon::Character
   # first room in the database.
   #
   # FIXME: This sucks, I think.
-  def room
-    room_association.nil? ? self.room = Aeon::Room.first : room_association
-  end
+  # def room
+  #   if room_association.nil? 
+  #     update_attributes(:room => Aeon::Room.first)
+  #   end
+  #   room_association
+  # end
   
   def say(str)
     @animator.display(%{#{self.name} says, "#{str}"})
@@ -30,4 +33,7 @@ class Aeon::Character
     self.room = self.room.send(direction)
   end
   
+  def look(target=self.room)
+    
+  end
 end

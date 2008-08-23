@@ -19,3 +19,5 @@
 )
 
 @room_start.link_with(@room_east, :east)
+
+@character.update_attributes(:room => @room_start)
