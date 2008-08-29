@@ -18,6 +18,18 @@ class Aeon::Room
   # Override DM's table name, which would have been "aeon_rooms"
   @storage_names[:default] = "rooms"
   
+  
+  
+  def self.load_rooms
+    @@room_cache = {}
+    Aeon::Room.all.each { |r| @@room_cache[r.id] = r }
+  end
+  
+  def self.get(id)
+    @@room_cache[id]
+  end
+  
+  
   OPPOSITES = {
     :north => :south,
     :south => :north,
