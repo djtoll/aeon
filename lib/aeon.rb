@@ -13,6 +13,8 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) unless
 
 module Aeon; end # Initialize the Aeon namespace.
 
+require 'aeon/core_ext/module'
+
 require 'aeon/logger'
 require 'aeon/reloader'
 require 'aeon/server'

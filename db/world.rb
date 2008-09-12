@@ -7,7 +7,7 @@
   :password => 'secret',
   :character => @character
 )
-  
+
 @room_start = Aeon::Room.create(
   :name => "A Test Room",
   :description => "You are in the test room!"

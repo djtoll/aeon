@@ -70,7 +70,7 @@ class Autotest::AeonRspec < Autotest
   end
   
   def make_test_cmd(files_to_test)
-    return "#{ruby} -S #{spec_command} #{add_options_if_present} #{files_to_test.keys.flatten.join(' ')}"
+    return "#{ruby} -S spec #{add_options_if_present} #{files_to_test.keys.flatten.join(' ')}"
   end
   
   def add_options_if_present # :nodoc:

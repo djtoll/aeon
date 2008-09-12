@@ -96,6 +96,15 @@ class Aeon::Player
   command :east do
     @animated_object.move(:east)
   end
+  command :west do
+    @animated_object.move(:west)
+  end
+  command :north do
+    @animated_object.move(:north)
+  end
+  command :south do
+    @animated_object.move(:south)
+  end
   
   command :look do
     display @animated_object.room.full_description
@@ -103,6 +112,10 @@ class Aeon::Player
   
   command :raise do
     raise "Fake Error, raised by #{name}."
+  end
+  
+  command :eval do |input|
+    display(eval(input))
   end
   
   

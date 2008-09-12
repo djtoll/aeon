@@ -19,16 +19,12 @@ class Aeon::Room
   @storage_names[:default] = "rooms"
   
   
-  
   def self.load_rooms
     @@room_cache = {}
     Aeon::Room.all.each { |r| @@room_cache[r.id] = r }
   end
   
-  def self.get(id)
-    @@room_cache[id]
-  end
-  
+  attr_accessor_with_default :objects, []
   
   OPPOSITES = {
     :north => :south,
@@ -71,20 +67,12 @@ class Aeon::Room
   def exits
     [north, east, south, west]
   end
-  
-  def exit_list
-    list =  []
-    list << 'north' if exits[0]
-    list << 'east'  if exits[1]
-    list << 'south' if exits[2]
-    list << 'west'  if exits[3]
-    list
-  end
 
   def full_description
     str =  "#{name}\n"
     str << "#{description}\n"
-    str << "Exits: #{exit_list.join(', ')}"
+    str << "#{objects.join(', ')}\n"
+    str << "Exits: #{exits.compact.join(', ')}"
   end
   
 end

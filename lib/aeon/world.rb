@@ -3,6 +3,7 @@ class Aeon::World
   
   def initialize
     @players = []
+    Aeon::Room.load_rooms
   end
   
   def connect(player)
