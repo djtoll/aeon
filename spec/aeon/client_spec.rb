@@ -32,9 +32,7 @@ describe Aeon::Client do
   it "should login a player and add them to the World's player registry" do
     @player = Aeon::Player.new(:name => "TestPlayer")
     @player.should_receive(:animate)
-    lambda {
-      @client.login_to_player(@player)
-    }.should change(Aeon.world.players, :length).by(1)
+    lambda { @client.login_to_player(@player) }.should change(Aeon.world.players, :length).by(1)
     @client.should be_displayed("Welcome to Aeon, TestPlayer.")
   end
   
@@ -44,6 +42,13 @@ describe Aeon::Client do
     @client.login_to_player(@player)
     @player.should_receive(:handle_input).with("Foo")
     @client.receive_data("Foo")
+  end
+  
+  it "should login a player" do
+    player = Aeon::Player.new(:name => "Ethrin")
+    player.character = Aeon::Character.new(:name => "Ethrin")
+    @client.login_to_player(player)
+    @client.player.should == player
   end
   
 end

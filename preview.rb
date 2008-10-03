@@ -8,15 +8,6 @@ def i(data)
   @client.receive_data(data)
 end
 
+char = @player.animated_object
 
-
-
-i 'look'
-i 'east'
-i 'look'
-i 'west'
-
-
-
-
-puts @client.pretty_transcript
+puts char.room

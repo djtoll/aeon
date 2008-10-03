@@ -12,16 +12,16 @@ class Aeon::Character
 
   attr_accessor :animator
   
-  # Reader for the Character's associated Room.
-  # This prevents the room association from being nil by defaulting it to the
-  # first room in the database.
-  #
-  # FIXME: This sucks, I think.
+  # Returns the character's associated room. If the character's room is nil
+  # for some reason, defaults to the first room in the database.
   def room
-    if room_association.nil? 
-      room = Aeon::Room.get(1)
-    end
-    room_association
+    room_association.nil? ? Aeon::Room.first : room_association
+    # room_association || Aeon::Room.first # odd...
+  end
+  
+  def get(foo)
+    debugger
+    foo
   end
   
   def to_s

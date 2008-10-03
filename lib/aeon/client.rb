@@ -39,12 +39,13 @@ module Aeon::Client
   # we need to let the player (and probably those in the same room) know.
   def login_to_player(player)
     @player = player
-    
     @player.client = self
-    @player.animate
-    @world.connect(@player)
-    display "Welcome to Aeon, #{@player.name}."
-    @player.prompt
+    
+    player.animate
+    @world.connect(player)
+    
+    display "Welcome to Aeon, #{player.name}."
+    player.prompt
   end
   
   

@@ -20,12 +20,12 @@ describe Aeon::Character do
     @character.room.should == room
   end
   
-  # it "should not allow a nil room association by defaulting it to the first room in the database" do
-  #   Aeon::Room.create(:name => "Test Room", :description => "Irrelevent description")
-  #   @character.room.should_not be_nil
-  #   @character.room = nil
-  #   @character.room.should == Aeon::Room.first
-  # end
+  it "should not allow a nil room association by defaulting it to the first room in the database" do
+    Aeon::Room.create(:name => "Test Room")
+    # @character.room.should_not be_nil
+    @character.room = nil
+    @character.room.should == Aeon::Room.first
+  end
   
   it "should move to another room" do
     @room = Aeon::Room.create(:name => "Test Room")

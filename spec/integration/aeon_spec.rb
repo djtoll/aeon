@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe "[Integration] A Player" do
+describe "[Integration] Aeon" do
   before(:each) do
     DataMapper.auto_migrate!
     @character = Aeon::Character.create(
@@ -18,12 +18,39 @@ describe "[Integration] A Player" do
     @client.receive_data(data)
   end
   
-  it "should log in the player and animate their character" do
+  def login
     input 'TestPlayer'
     input 'secret'
-    
+  end
+  
+  it "should log in the player" do
+    login
     @client.should be_displayed("Welcome to Aeon, TestPlayer.")
     @client.player.should == @player
+  end
+  
+  it "should log in the player and animate their character" do
+    @client.login_to_player(@player)
+    @player.animated_object.should == @character
+  end
+  
+  it "should place a player's animated object into a room" do
+    Aeon::Room.create(:name => "Foo Room")
+    @client.login_to_player(@player)
+    @client.player.animated_object.room.should_not be_nil
+  end
+  
+  it "should place two characters into the same room object" do
+    room = Aeon::Room.create(:name => "Foo Room")
+    
+    client2 = MockClient.new
+    character2 = Aeon::Character.create(:name => "Bob")
+    player2 = Aeon::Player.create(:name => "Bob", :character => character2)
+    
+    @client.login_to_player(@player)
+    client2.login_to_player(player2)
+    
+    character2.room.object_id.should == @character.room.object_id
   end
   
   # describe "moving rooms" do
