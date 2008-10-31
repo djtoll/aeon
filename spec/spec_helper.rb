@@ -13,7 +13,6 @@ include OutputMatchers
 require File.dirname(__FILE__) + '/mocks/mock_client'
 
 # Setup the test database using in-memory SQLite3
-require 'dm-core'
+# require 'dm-core'
 DataMapper.setup(:default, 'sqlite3::memory:')
-
 DataMapper.auto_migrate!
