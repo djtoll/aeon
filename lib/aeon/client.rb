@@ -8,6 +8,10 @@ module Aeon::Client
   
   # Called when the client connects
   def post_init
+    DataMapper.logger.debug "A LOG IN"
+    Aeon::Player.first(:name => "Halv")
+    Aeon::Player.first(:name => "ChooChoo")
+    
     @world     = Aeon.world
     @connector = Aeon::Connector.new(self, @world)
   end
@@ -38,23 +42,36 @@ module Aeon::Client
   # TODO: this needs to check to see if the player is already logged in. If so
   # we need to let the player (and probably those in the same room) know.
   def login_to_player(player)
+    player.client.force_disconnect unless player.client.nil?
+    
     @player = player
     @player.client = self
     
     player.animate
+    
     @world.connect(player)
+    player.animated_object.room = Aeon::Room.first
     
     display "Welcome to Aeon, #{player.name}."
+    
     player.prompt
   end
   
   
+  def force_disconnect
+    display "You are being disconnected because of another login to this player."
+    close_connection_after_writing
+  end
   
   def prompt(str)
     send_data "\n#{str}"
   end
   
   def display(str)
+    send_data "\n#{str}\n"
+  end
+  
+  def output(str)
     send_data "\n#{str}\n"
   end
 

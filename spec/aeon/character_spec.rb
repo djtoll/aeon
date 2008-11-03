@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Aeon::Character do
   before(:each) do
-    DataMapper.auto_migrate! # reset database after each example
+    # DataMapper.auto_migrate! # reset database after each example
     @player    = Aeon::Player.new(:name => "TestPlayer")
     @character = Aeon::Character.new(:name => "TestPlayer")
   end
@@ -27,23 +27,31 @@ describe Aeon::Character do
     @character.room.should == Aeon::Room.first
   end
   
+  it "should show the player the result" do
+    @room = Aeon::Room.new(:name => "Stupid Room")
+    
+    @player.animate(@character)
+    @character.animator = @player
+    
+    @room.objects << @character
+    @character.room = @room
+    
+    # @player.should_receive(:output).with(any_args)
+    @player.should_receive(:output).with("TestPlayer says, \"Hello\"")
+    
+    @character.say("Hello")
+  end
+  
   it "should move to another room" do
     @room = Aeon::Room.create(:name => "Test Room")
     @room_east = Aeon::Room.create(:name => "East Room")
     @room.stub!(:east).and_return(@room_east)
     
-    @character.animator = mock("Player", :display => true)
+    @character.animator = mock("Player", :output => true)
+    
     @character.room = @room
     @character.move(:east)
     @character.room.should == @room_east
-  end
-  
-  describe "#say" do
-    it "should show the player the result" do
-      @player.animate(@character)
-      @player.should_receive(:display).with("TestPlayer says, \"Hello\"")
-      @character.say("Hello")
-    end
   end
   
 end

@@ -29,7 +29,7 @@ class Aeon::Player
   # Animate is the method that actually gives a Player control over a game
   # object (usually their Character).
   def animate(object=self.character)
-    raise "Can't animate nil object." if object.nil?
+    raise "Tried to animate a nil object. Does this Player have a Character?" if object.nil?
     @animated_object = object
     object.animator  = self
   end
@@ -53,7 +53,7 @@ class Aeon::Player
     # Grab the first word as the command, the rest as the args  
     cmd, args = input.split(/\s/, 2)
     # find a list of matching commands
-    matches = @@commands.grep(/#{cmd}/)
+    matches = @@commands.grep(/^#{cmd}/)
     unless matches.empty?
       send "cmd_#{matches.first}", args
     else
@@ -70,28 +70,6 @@ class Aeon::Player
     define_method("cmd_#{command_name.to_s}", &block)
   end
   
-  command :who do
-    msg =  "Online Players:\n"
-    msg << "---------------\n"
-    msg << Aeon.world.players.inject('') {|memo, p| memo << "#{p.name}\n"}
-    display msg
-  end
-  
-  command :whoami do
-    display "You are #{@name}."
-  end
-  
-  command :ooc do |args|
-    Aeon.world.players.each do |player|
-      player.display "[OOC] TestPlayer: #{args}"
-    end
-  end
-  
-  command :quit do
-    display "Goodbye!", false
-    deanimate
-    @client.close_connection_after_writing
-  end
   
   command :east do
     @animated_object.move(:east)
@@ -106,9 +84,36 @@ class Aeon::Player
     @animated_object.move(:south)
   end
   
+  command :say do |str|
+    @animated_object.say(str)
+  end
+  
+  command :who do
+    msg =  "Online Players:\n"
+    msg << "---------------\n"
+    msg << Aeon.world.players.inject('') {|memo, p| memo << "#{p.name}\n"}
+    display msg
+  end
+  
+  command :whoami do
+    display "You are #{@name}."
+  end
+  
+  command :ooc do |args|
+    Aeon.world.players.each do |player|
+      player.display "[OOC] #{name}: #{args}"
+    end
+  end
+  
+  command :quit do
+    display "Goodbye!", false
+    deanimate
+    @client.close_connection_after_writing
+  end
+  
   command :look do
     display @animated_object.room.full_description
-  end 
+  end
   
   command :raise do
     raise "Fake Error, raised by #{name}."
@@ -124,6 +129,11 @@ class Aeon::Player
   # We also reprompt after each display unless told otherwise
   def display(str, reprompt=true)
     @client.display(str)
+    prompt if reprompt
+  end
+  
+  def output(str, reprompt=true)
+    @client.output(str)
     prompt if reprompt
   end
   

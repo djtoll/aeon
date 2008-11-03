@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Aeon::Connector, "when logging in a player" do
   
   before(:each) do
-    DataMapper.auto_migrate!
+    # DataMapper.auto_migrate!
     @client = MockClient.new
     @world  = Aeon::World.new
   end

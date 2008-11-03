@@ -5,4 +5,3 @@ describe "Aeon" do
     $LOAD_PATH.should include(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib')))
   end
 end
-

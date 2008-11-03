@@ -53,6 +53,15 @@ describe "[Integration] Aeon" do
     character2.room.object_id.should == @character.room.object_id
   end
   
+  it "should disconnect a client if another client logs into the same player" do
+    @client.login_to_player(@player)
+    
+    @client.should_receive(:force_disconnect)
+    
+    @client2 = MockClient.new
+    @client2.login_to_player(@player)
+  end
+  
   # describe "moving rooms" do
   #   before(:each) do
   #     @room_start = Aeon::Room.new(

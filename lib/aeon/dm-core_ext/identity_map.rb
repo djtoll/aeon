@@ -23,6 +23,10 @@ module DataMapper
     # Create the class variable
     @@identity_maps = {}
     
+    def self.reset_identity_maps!
+      @@identity_maps = {}
+    end
+    
     def identity_map(model)
       @@identity_maps[model] ||= IdentityMap.new
     end

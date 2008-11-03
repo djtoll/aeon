@@ -1,10 +1,18 @@
 #!/usr/bin/env ruby
 require File.dirname(__FILE__) + '/../lib/aeon'
 
-# Running with the "tt" option will launch tt++ using config/tt++.config 
-  
 Aeon.mode = :development
 
+
+module DataMapper
+  class Logger
+    def write_method(str)
+      puts "ASS FACE"
+    end
+  end
+end
+
+# Running with the "tt" option will launch tt++ using config/tt++.config 
 case ARGV.first
 when nil
   Aeon::Server.start

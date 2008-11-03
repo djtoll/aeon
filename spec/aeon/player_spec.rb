@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Aeon::Player do
   before(:each) do
-    DataMapper.auto_migrate! # reset DB after every test
+    # DataMapper.auto_migrate! # reset DB after every test
     @player = Aeon::Player.new(:name => 'TestPlayer')
   end
   
@@ -25,6 +25,23 @@ describe Aeon::Player do
     @player.character = char
     @player.save
     @player.character.should === char
+  end
+  
+  it "should execute commands" do
+    class Aeon::Player
+      @@old_commands = @@commands
+      @@commands = ['look', 'laugh']
+    end
+    
+    @player.should_receive(:cmd_look)
+    @player.execute_command('l')
+    
+    @player.should_receive(:cmd_laugh)
+    @player.execute_command('la')
+    
+    class Aeon::Player
+      @@commands = @@old_commands
+    end
   end
 end
 
@@ -53,8 +70,6 @@ describe Aeon::Player, "logging in" do
     @client.receive_data("\n\n")
     @client.should be_prompted('TestPlayer> ')
   end
-  
-  it "should place the player in an initial room"
   
   it "should animate their character" do
     @player.should_receive(:animate)

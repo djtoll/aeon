@@ -8,6 +8,17 @@
   :character => @character
 )
 
+
+@character2 = Aeon::Character.create(
+  :name => 'Halv'
+)
+@player2 = Aeon::Player.create(
+  :name => 'Halv',
+  :password => 'secret',
+  :character => @character2
+)
+
+
 @room_start = Aeon::Room.create(
   :name => "A Test Room",
   :description => "You are in the test room!"
