@@ -8,10 +8,6 @@ module Aeon::Client
   
   # Called when the client connects
   def post_init
-    DataMapper.logger.debug "A LOG IN"
-    Aeon::Player.first(:name => "Halv")
-    Aeon::Player.first(:name => "ChooChoo")
-    
     @world     = Aeon.world
     @connector = Aeon::Connector.new(self, @world)
   end
@@ -46,14 +42,11 @@ module Aeon::Client
     
     @player = player
     @player.client = self
-    
-    player.animate
-    
     @world.connect(player)
-    player.animated_object.room = Aeon::Room.first
     
     display "Welcome to Aeon, #{player.name}."
     
+    player.animate
     player.prompt
   end
   

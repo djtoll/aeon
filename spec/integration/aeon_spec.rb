@@ -37,7 +37,7 @@ describe "[Integration] Aeon" do
   it "should place a player's animated object into a room" do
     Aeon::Room.create(:name => "Foo Room")
     @client.login_to_player(@player)
-    @client.player.animated_object.room.should_not be_nil
+    @player.animated_object.room.should_not be_nil
   end
   
   it "should place two characters into the same room object" do

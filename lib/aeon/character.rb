@@ -19,8 +19,9 @@ class Aeon::Character
   # end
   
   def room=(new_room)
+    raise "Tried to assign a nil room" if new_room.nil?
     self.room.characters.delete(self) if self.room
-    new_room.characters << self unless new_room.nil?
+    new_room.characters << self
     room_association.replace(new_room)
   end
   

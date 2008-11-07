@@ -32,6 +32,13 @@ class Aeon::Room
     :west  => :east
   }
   
+  # Returns the first room in the database or creates one on the spot called "The Void".
+  def self.default_room
+    Aeon::Room.first || 
+      create(:name => "The Void", :description => "Vast emptiness surrounds you.") 
+  end
+  
+  
   # Set up a getter for each direction that returns the linked room.
   %w(north east south west).each do |direction|
     class_eval <<-EOF

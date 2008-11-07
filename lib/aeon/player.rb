@@ -29,9 +29,9 @@ class Aeon::Player
   # Animate is the method that actually gives a Player control over a game
   # object (usually their Character).
   def animate(object=self.character)
-    raise "Tried to animate a nil object. Does this Player have a Character?" if object.nil?
     @animated_object = object
     object.animator  = self
+    object.room = Aeon::Room.default_room if object.room.nil?
   end
   
   # Stop controlling the currently animated object.

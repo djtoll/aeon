@@ -38,7 +38,7 @@ describe Aeon::Client do
   
   it "should send input data to the logged in Player" do
     @player = Aeon::Player.new
-    @player.stub!(:animate)
+    @player.stub!(:animate).and_return('character')
     @client.login_to_player(@player)
     @player.should_receive(:handle_input).with("Foo")
     @client.receive_data("Foo")

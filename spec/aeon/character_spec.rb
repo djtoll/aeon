@@ -20,15 +20,15 @@ describe Aeon::Character do
     @character.room.should == room
   end
   
-  it "should not allow a nil room association by defaulting it to the first room in the database" do
+  it "should not allow a nil room association" do
     Aeon::Room.create(:name => "Test Room")
     # @character.room.should_not be_nil
-    @character.room = nil
-    @character.room.should == Aeon::Room.first
+    lambda { @character.room = nil }.should raise_error
+    
   end
   
   it "should show the player the result" do
-    @room = Aeon::Room.new(:name => "Stupid Room")
+    @room = Aeon::Room.create(:name => "Stupid Room")
     
     @player.animate(@character)
     @character.animator = @player
