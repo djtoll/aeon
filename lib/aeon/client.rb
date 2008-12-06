@@ -42,12 +42,13 @@ module Aeon::Client
     
     @player = player
     @player.client = self
-    @world.connect(player)
+    @player.animate
     
-    display "Welcome to Aeon, #{player.name}."
+    @world.connect(@player)
     
-    player.animate
-    player.prompt
+    display "Welcome to Aeon, #{@player.name}."
+    
+    @player.prompt
   end
   
   

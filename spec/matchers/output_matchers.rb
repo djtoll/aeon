@@ -23,7 +23,8 @@ module OutputMatchers
   
   
   class BeDisplayed
-    def initialize(expected)
+    def initialize(expected, type=nil)
+      @type = type
       @expected = "\n#{expected}\n"
     end
 
@@ -33,15 +34,28 @@ module OutputMatchers
       
       return false if @output.nil? || @output.empty?
       
-      if @output.length == 1
-        @output.include? @expected
+      if @type == :contains
+        expected_lines = @expected.split("\n").collect {|l| l.strip}
+        
+        # Reject empty lines
+        expected_lines.reject! {|l| l.empty?}
+        @client.output_lines.reject! {|l| l.empty?}
+        
+        # Subtract the expected lines from the output.
+        # Did it remove the amount of lines it should have?
+        (@client.output_lines - expected_lines).size == @client.output_lines.size - expected_lines.size
       else
-        @output[-2..-1].include? @expected
+        if @output.size == 1
+          @output.first == @expected
+        else
+          @output[-2..-1].include? @expected
+        end
       end
     end
 
     def failure_message
-      msg = "expected display: #{@expected.inspect}\n"
+      msg =  "Expected display: #{@expected.inspect}\n"
+      msg << "     Output dump: #{@output.inspect}\n"
       msg << @client.pretty_transcript
     end
 
@@ -58,5 +72,10 @@ module OutputMatchers
   def be_displayed(expected)
     BeDisplayed.new(expected)
   end
+  
+  def contain_display(expected)
+    BeDisplayed.new(expected, :contains)
+  end
+  
   
 end

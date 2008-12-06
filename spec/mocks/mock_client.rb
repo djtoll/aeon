@@ -43,6 +43,10 @@ class MockClient
     msg
   end
   
+  def output_lines
+    @output.join.split("\n")
+  end
+  
   # add received data to the transcript as input
   def receive_data(data)
     @transcript << "#{data.inspect}".yellow

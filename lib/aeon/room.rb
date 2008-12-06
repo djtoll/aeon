@@ -5,23 +5,18 @@ class Aeon::Room
   property :name,         String
   property :description,  Text
   
-  property :north_id,     Integer
-  property :east_id,      Integer
-  property :south_id,     Integer
-  property :west_id,      Integer
+  belongs_to :north, :class_name => "Room"
+  belongs_to :south, :class_name => "Room"
+  belongs_to :east,  :class_name => "Room"
+  belongs_to :west,  :class_name => "Room"
   
-  property :created_at,   DateTime
-  property :updated_at,   DateTime
+  property :created_at, DateTime
+  property :updated_at, DateTime
   
   has n, :characters
   
   # Override DM's table name, which would have been "aeon_rooms"
   @storage_names[:default] = "rooms"
-  
-  def self.load_rooms
-    @@room_cache = {}
-    Aeon::Room.all.each { |r| @@room_cache[r.id] = r }
-  end
   
   attr_accessor_with_default :objects, []
   
@@ -38,47 +33,39 @@ class Aeon::Room
       create(:name => "The Void", :description => "Vast emptiness surrounds you.") 
   end
   
-  
-  # Set up a getter for each direction that returns the linked room.
-  %w(north east south west).each do |direction|
-    class_eval <<-EOF
-      # Return the room linked to this room to the #{direction}.
-      def #{direction}
-        @#{direction} ||= (Aeon::Room.get(#{direction}_id) if #{direction}_id)
-      end
-    EOF
+  def link(direction, new_room)
+    opposite = OPPOSITES[direction]
+    eval <<-EVAL
+      new_room.#{opposite}.#{direction} = nil if new_room.#{opposite}
+      #{direction}.#{opposite} = nil if #{direction}
+
+      self.#{direction} = new_room
+      new_room.#{opposite} = self
+    EVAL
   end
   
-  # Link this room to another room in the specified direction.
-  #
-  # FIXME: This feels a bit hackish, especially using instance_variable_set.
-  # At the moment I can't really think of a cleaner solution. It would be nice
-  # to be able to do this using DM's 1-to-1 associations, but attempts at that
-  # have failed.
-  def link_with(room, direction)
-    return false if exits.include?(room)
-    # First we set an instance variable with the name of the direction on both rooms.
-    self.instance_variable_set("@#{direction}", room)
-    room.instance_variable_set("@#{OPPOSITES[direction]}", self)
-    # Ensure that both rooms have an ID so that we can make the linkage in the DB.
-    self.save if self.new_record?
-    room.save if room.new_record?
-    # Then we set the <direction>_id of each room so the linkage can be persisted to the DB.
-    self.update_attributes("#{direction}_id" => room.id)
-    room.update_attributes("#{OPPOSITES[direction]}_id" => self.id)
-  end
-  
-  # Returns rooms that this room is linked to as an array of room in the form of:
-  #   [n, e, s, w]
+  # Returns array of rooms tis room is linked to in this order: [n, e, s, w]
   def exits
     [north, east, south, west]
+  end
+  
+  def exit_list
+    list = []
+    list << "n" if north
+    list << "e" if east
+    list << "s" if south
+    list << "w" if west
+  end
+  
+  def orphaned?
+    exits.compact.empty?
   end
 
   def full_description
     str =  "#{name}\n"
     str << "#{description}\n"
-    str << "#{objects.join(', ')}\n"
-    str << "Exits: #{exits.compact.join(', ')}"
+    str << "Objects: #{objects.join(', ')}\n"
+    str << "Exits: #{exit_list}"
   end
   
 end

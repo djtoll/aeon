@@ -18,40 +18,5 @@ describe Aeon::Character do
     @character.room = room
     @character.save
     @character.room.should == room
-  end
-  
-  it "should not allow a nil room association" do
-    Aeon::Room.create(:name => "Test Room")
-    # @character.room.should_not be_nil
-    lambda { @character.room = nil }.should raise_error
-    
-  end
-  
-  it "should show the player the result" do
-    @room = Aeon::Room.create(:name => "Stupid Room")
-    
-    @player.animate(@character)
-    @character.animator = @player
-    
-    @room.objects << @character
-    @character.room = @room
-    
-    # @player.should_receive(:output).with(any_args)
-    @player.should_receive(:output).with("TestPlayer says, \"Hello\"")
-    
-    @character.say("Hello")
-  end
-  
-  it "should move to another room" do
-    @room = Aeon::Room.create(:name => "Test Room")
-    @room_east = Aeon::Room.create(:name => "East Room")
-    @room.stub!(:east).and_return(@room_east)
-    
-    @character.animator = mock("Player", :output => true)
-    
-    @character.room = @room
-    @character.move(:east)
-    @character.room.should == @room_east
-  end
-  
+  end  
 end

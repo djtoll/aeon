@@ -29,6 +29,6 @@
   :description => "The eastern test room"
 )
 
-@room_start.link_with(@room_east, :east)
+@room_start.link(:east, @room_east)
 
 @character.update_attributes(:room => @room_start)

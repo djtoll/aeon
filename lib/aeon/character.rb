@@ -12,34 +12,28 @@ class Aeon::Character
 
   attr_accessor :animator
   
-  # Returns the character's associated room. If the character's room is nil
-  # for some reason, defaults to the first room in the database.
-  # def room
-  #   room_association.nil? ? self.room = Aeon::Room.first : room_association
-  # end
-  
-  def room=(new_room)
-    raise "Tried to assign a nil room" if new_room.nil?
-    self.room.characters.delete(self) if self.room
-    new_room.characters << self
-    room_association.replace(new_room)
-  end
-  
   def to_s
     "#{name}"
   end
   
   def say(str)
     room.objects.each do |obj|
-      obj.animator.output(%{#{self.name} says, "#{str}"})
+      obj.animator.display(%{#{self.name} says, "#{str}"})
     end
   end
   
   def move(direction)
-    self.room.objects.delete(self)
-    @animator.output("You move #{direction}.")
-    self.room = self.room.send(direction)
-    self.room.objects << self
+    room.objects.delete(self)
+    @animator.display("You move #{direction}.")
+    move_to room.send(direction)
+  end
+  
+  def move_to(new_room)
+    raise "Tried to assign a nil room" if new_room.nil?
+    room.objects.delete(self)
+    room = new_room
+    new_room.objects << self
+    @animator.display(room.full_description)
   end
   
   def look(target=room)
