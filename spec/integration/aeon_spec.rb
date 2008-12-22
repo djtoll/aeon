@@ -2,6 +2,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe "[Integration] Aeon" do
   before(:each) do
+    @world = Aeon::World.new
+    
     @character = Aeon::Character.create(
       :name => "TestPlayer"
     )
@@ -54,10 +56,9 @@ describe "[Integration] Aeon" do
   
   it "should disconnect a client if another client logs into the same player" do
     @client.login_to_player(@player)
+    @client.should_receive(:disconnect)
     
-    @client.should_receive(:force_disconnect)
-    
-    @client2 = MockClient.new
-    @client2.login_to_player(@player)
+    client2 = MockClient.new
+    client2.login_to_player(@player)
   end
 end

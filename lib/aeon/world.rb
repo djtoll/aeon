@@ -1,15 +1,31 @@
 class Aeon::World
-  attr_accessor :players
+  
+  class NoWorldError < RuntimeError
+    def message
+      "Tried to access the current World instance when no World has been instantiated!"
+    end
+  end
+  
+  class << self
+    attr_writer :current_instance
+    
+    def current_instance
+      @current_instance or raise(NoWorldError)
+    end
+  end
+  
+  attr_reader   :players
   
   def initialize
+    Aeon::World.current_instance = self
     @players = []
   end
   
-  def connect(player)
+  def add_player(player)
     @players << player
   end
   
-  def disconnect(player)
+  def remove_player(player)
     @players.delete(player)
   end
   

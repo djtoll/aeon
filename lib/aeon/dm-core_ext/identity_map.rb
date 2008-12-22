@@ -11,31 +11,31 @@
 # by default is that the IdentityMap will grow until it consumes all available
 # memory. This makes plenty of sense. However I'm hoping that this won't
 # affect my game since ideally I *want* everything in memory at the same time.
+# ...I think.
 #
 # The other option is to use a "Weak Hash" for the Identity Maps. Weak Hashes
-# will allow the garbage collector to delete objects that are no long
+# will allow the garbage collector to key/values that are no longer
 # referenced by anything but the Weak Hash. Unfortunately, there doesn't seem
 # to be a solid Weak Hash implementation for Ruby, I think due to the GC's
-# funky support for finalizers.
+# funky support for finalizers (but honestly I'm only going off of word of mouth)
 
 module DataMapper
   class Repository
-    # Create the class variable
     @@identity_maps = {}
     
     def self.reset_identity_maps!
       @@identity_maps = {}
     end
     
-    def identity_map(model)
-      @@identity_maps[model] ||= IdentityMap.new
-    end
-
-    # Before monkey patch:
+    # Before:
     #
     #   def identity_map(model)
     #     @identity_maps[model] ||= IdentityMap.new
     #   end
     #
+    def identity_map(model)
+      @@identity_maps[model] ||= IdentityMap.new
+    end
+    
   end
 end

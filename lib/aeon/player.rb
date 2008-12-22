@@ -16,60 +16,57 @@ class Aeon::Player
   @storage_names[:default] = "players"
   
   
-  attr_accessor :client
-  attr_accessor :animated_object
+  include Commandable
+  
+  attr_reader :client
+  attr_reader :world
+  attr_reader :animated_object
+  
+  # Entry point for input from the Client. Do some cleanup on the input and
+  # react to it.
+  def handle_input(str)
+    str.strip!
+    return prompt if str.empty?
+    execute_command(str)
+  end
   
   
-  # TODO: yeah, obviously storing passwords in plain text is a bad idea. This
-  # will change.
+  # TODO: Encrypt passwords.
   def self.authenticate(name, password)
-    self.first(:name => name, :password => password)
+    first(:name => name, :password => password)
   end
   
   # Animate is the method that actually gives a Player control over a game
-  # object (usually their Character).
-  def animate(object=self.character)
-    @animated_object = object
-    object.animator  = self
-    object.room = Aeon::Room.default_room if object.room.nil?
+  # object (their character by default)
+  def animate(object=character)
+    @animated_object = object.become_animated(self)
   end
   
   # Stop controlling the currently animated object.
-  def deanimate(object=self.character)
+  def deanimate(object=character)
     @animated_object = nil
-    object.animator  = nil
-  end
-
-  # Entry point for input from the Client. Do some cleanup on the input and
-  # react to it.
-  def handle_input(data)
-    data = data.strip.chomp
-    return prompt if data.empty?
-    execute_command(data)
+    object.become_deanimated
   end
   
-  # Searches the list of commands for a matching one and executes it.
-  def execute_command(input)
-    # Grab the first word as the command, the rest as the args  
-    cmd, args = input.split(/\s/, 2)
-    # find a list of matching commands
-    matches = @@commands.grep(/^#{cmd}/)
-    unless matches.empty?
-      send "cmd_#{matches.first}", args
-    else
-      display 'Huh?'
-    end
-  end
-
-
-  
-  # Class method for DSL-ish definition of commands.
-  def self.command(command_name, &block)
-    @@commands ||= []
-    @@commands <<  command_name.to_s
-    define_method("cmd_#{command_name.to_s}", &block)
+  def login(client)
+    @client.disconnect("This player has been logged in from another connection.") if logged_in?
+    @client = client
+    @world  = Aeon::World.current_instance
+    @world.add_player(self)
+    animate
+    display "Welcome to Aeon, #{name}."
   end
   
+  def logout
+    deanimate if @animated_object
+    @client.disconnect
+    @client = nil
+    @world.remove_player(self)
+  end
+  
+  def logged_in?
+    @client ? true : false
+  end
   
   command :east do
     @animated_object.move(:east)
@@ -84,14 +81,14 @@ class Aeon::Player
     @animated_object.move(:south)
   end
   
-  command :say do |str|
-    @animated_object.say(str)
+  command :say do |msg|
+    @animated_object.say(msg)
   end
   
   command :who do
     msg =  "Online Players:\n"
     msg << "---------------\n"
-    msg << Aeon.world.players.inject('') {|memo, p| memo << "#{p.name}\n"}
+    msg << @world.players.collect {|p| "#{p.name}\n"}.join
     display msg
   end
   
@@ -99,16 +96,14 @@ class Aeon::Player
     display "You are #{@name}."
   end
   
-  command :ooc do |args|
-    Aeon.world.players.each do |player|
-      player.display "[OOC] #{name}: #{args}"
+  command :ooc do |msg|
+    @world.players.each do |p|
+      p.display "[OOC] #{name}: #{msg}"
     end
   end
   
   command :quit do
-    display "Goodbye!", false
-    deanimate
-    @client.close_connection_after_writing
+    logout
   end
   
   command :look do
@@ -123,7 +118,6 @@ class Aeon::Player
     display(eval(input))
   end
   
-  
     
   # Delegator to Aeon::Client#display
   # We also reprompt after each display unless told otherwise
@@ -132,14 +126,17 @@ class Aeon::Player
     prompt if reprompt
   end
   
-  def output(str, reprompt=true)
-    @client.output(str)
-    prompt if reprompt
+  # Delegator to Aeon::Client#prompt
+  # Prompt with +str+ or the default prompt "PlayerName> "
+  def prompt(str="#{@name}> ")
+    @client.prompt(str)
   end
   
-  # Delegator to Aeon::Client#prompt
-  def prompt(str=nil)
-    str ? @client.prompt(str) : @client.prompt("#{@name}> ")
+  def reload!
+    @client.reload!
+    @client = nil
+    deanimate if @animated_object
+    @world.remove_player(self)
   end
 
 end

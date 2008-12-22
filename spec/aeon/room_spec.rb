@@ -14,14 +14,14 @@ describe Aeon::Room do
       # @r1 <---------> @r2
       @r1.link(:east, @r2)
 
-      # puts "r1.east = #{r1.east}"
-      # puts "r2.west = #{r2.west}"
-
       @r1.east.should == @r2
       @r2.west.should == @r1
     end
 
     it "should link one Room to another and destroy the existing link" do
+      # @r1 <---------> @r2
+      @r1.link(:east, @r2)
+      
       # @r1 <---  xxx > @r2
       #         `.
       #           `---> @r3
@@ -52,12 +52,6 @@ describe Aeon::Room do
 
       @r3.should be_orphaned
       @r2.should be_orphaned
-    end
-    
-    it "should not allow room1 to link to room2 if room1 already links to room2 in some other direction" do
-      @r1.link(:east, @r2)
-      # lambda { @r1.link(:north, @r2) }.should raise_error
-      @r1.link(:north, @r2)
     end
   end
 

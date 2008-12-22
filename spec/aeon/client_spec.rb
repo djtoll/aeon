@@ -16,39 +16,31 @@ describe Aeon::Client do
     @client.prompt("Foo")
   end
   
-  it "should display text with a newline before & after" do
+  it "should display text with a newline before and after" do
     @client.should_receive(:send_data).with("\nFoo Data\n")
     @client.display("Foo Data")
   end
   
   it "should send input data to the Connector if no Player is logged in" do
-    @connector = mock("Connector")
-    Aeon::Connector.should_receive(:new).and_return(@connector)
+    connector = mock("Connector")
+    Aeon::Connector.should_receive(:new).and_return(connector)
     @client.post_init # simulate client connecting
-    @connector.should_receive(:handle_input)
+    connector.should_receive(:handle_input)
     @client.receive_data("Foo")
   end
   
-  it "should login a player and add them to the World's player registry" do
-    @player = Aeon::Player.new(:name => "TestPlayer")
-    @player.should_receive(:animate)
-    lambda { @client.login_to_player(@player) }.should change(Aeon.world.players, :length).by(1)
-    @client.should be_displayed("Welcome to Aeon, TestPlayer.")
-  end
-  
-  it "should send input data to the logged in Player" do
-    @player = Aeon::Player.new
-    @player.stub!(:animate).and_return('character')
-    @client.login_to_player(@player)
-    @player.should_receive(:handle_input).with("Foo")
+  it "should send input data to its logged in Player" do
+    player = mock("Player", :login => true)
+    @client.login_to_player(player)
+    
+    player.should_receive(:handle_input).with("Foo")
     @client.receive_data("Foo")
   end
   
   it "should login a player" do
-    player = Aeon::Player.new(:name => "Ethrin")
-    player.character = Aeon::Character.new(:name => "Ethrin")
+    player = mock("Player")
+    player.should_receive(:login)
     @client.login_to_player(player)
-    @client.player.should == player
   end
   
 end

@@ -8,14 +8,11 @@ module Aeon::Client
   
   # Called when the client connects
   def post_init
-    @world     = Aeon.world
-    @connector = Aeon::Connector.new(self, @world)
+    @connector = Aeon::Connector.new(self)
   end
   
   # Called when we receive data from the client
   def receive_data(data)
-    # TODO: perhaps sanitize data here?
-    # send_data(data.inspect)
     if @player
       @player.handle_input(data)
     else
@@ -23,37 +20,29 @@ module Aeon::Client
     end
   rescue => e
     # We want errors to be raised when Aeon is in test mode.
-    raise e if Aeon.mode == :test
-    Aeon.logger.error(e)
+    Aeon.mode == :test ? raise(e) : Aeon.logger.error(e)
   end
   
   # Called when the client disconnects
   def unbind
-    @world.disconnect(@player) if @player
+    @player.logout if @player
   end
   
   
-  # Logs a client into a player and tells the player to animate its character.
-  #
-  # TODO: this needs to check to see if the player is already logged in. If so
-  # we need to let the player (and probably those in the same room) know.
   def login_to_player(player)
-    player.client.force_disconnect unless player.client.nil?
-    
     @player = player
-    @player.client = self
-    @player.animate
-    
-    @world.connect(@player)
-    
-    display "Welcome to Aeon, #{@player.name}."
-    
-    @player.prompt
+    @player.login(self)
+    @connector = nil
+  end
+  
+  def reload!
+    login_to_player(Aeon::Player.get(@player.id))
   end
   
   
-  def force_disconnect
-    display "You are being disconnected because of another login to this player."
+  def disconnect(msg="Goodbye!")
+    @player = nil
+    display msg
     close_connection_after_writing
   end
   
@@ -62,10 +51,6 @@ module Aeon::Client
   end
   
   def display(str)
-    send_data "\n#{str}\n"
-  end
-  
-  def output(str)
     send_data "\n#{str}\n"
   end
 

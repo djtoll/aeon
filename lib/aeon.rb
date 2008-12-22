@@ -17,23 +17,26 @@ AEON_ROOT = File.expand_path(File.dirname(__FILE__) + "/..")
 module Aeon; end # Initialize the Aeon namespace.
 
 require 'aeon/core_ext/module'
-
 require 'aeon/logger'
-require 'aeon/reloader'
-require 'aeon/server'
-require 'aeon/client'
-require 'aeon/connector'
-require 'aeon/world'
-require 'aeon/room'
-require 'aeon/character'
-require 'aeon/player'
 
 module Aeon
   class << self
-    attr_reader   :world  # Global instance of the World object
     attr_reader   :logger # Global instance of the Logger
     attr_accessor :mode   # Aeon's run mode (:development, :test, or :production)
   end
-  @world  = Aeon::World.new
   @logger = Aeon::Logger.new
+end
+
+
+require 'aeon/loader'
+require 'aeon/server'
+require 'aeon/client'
+
+Aeon::Loader.observe_files do |r|
+  r.load 'aeon/connector'
+  r.load 'aeon/world'
+  r.load 'aeon/room'
+  r.load 'aeon/character'
+  r.load 'aeon/commandable'
+  r.load 'aeon/player'
 end

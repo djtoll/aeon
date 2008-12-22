@@ -39,9 +39,8 @@ class Aeon::Connector
   
   
   
-  def initialize(client, world)
+  def initialize(client)
     @client = client
-    @world  = world
     transition_to :enter_name
   end
   

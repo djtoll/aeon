@@ -5,17 +5,17 @@ describe Aeon::World do
     @world = Aeon::World.new
   end
   
-  it "should connect a player" do
+  it "should add a player to its list of players" do
     lambda { 
-      @world.connect(mock("Player")) 
+      @world.add_player(mock("Player")) 
     }.should change(@world.players, :length).by(1)
   end
   
-  it "should disconnect a player" do
+  it "should remove a player from its list of players" do
     player = mock("Player")
-    @world.connect(player)
+    @world.add_player(player)
     lambda { 
-      @world.disconnect(player) 
+      @world.remove_player(player) 
     }.should change(@world.players, :length).by(-1)
   end
   
