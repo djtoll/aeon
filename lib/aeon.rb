@@ -35,6 +35,7 @@ require 'aeon/room'
 require 'aeon/character'
 require 'aeon/commandable'
 require 'aeon/player'
+require 'aeon/event'
 
 # Aeon::Loader.observe_files do |r|
 #   r.load 'aeon/connector'

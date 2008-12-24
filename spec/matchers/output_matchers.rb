@@ -36,19 +36,20 @@ module OutputMatchers
       
       if @type == :contains
         expected_lines = @expected.split("\n").collect {|l| l.strip}
-        
         # Reject empty lines
         expected_lines.reject! {|l| l.empty?}
         @client.output_lines.reject! {|l| l.empty?}
         
         # Subtract the expected lines from the output.
         # Did it remove the amount of lines it should have?
-        (@client.output_lines - expected_lines).size == @client.output_lines.size - expected_lines.size
+        puts (@client.output_lines - expected_lines).size
+        puts (@client.output_lines.size - expected_lines.size)
+        (@client.output_lines - expected_lines).size == (@client.output_lines.size - expected_lines.size)
       else
         if @output.size == 1
           @output.first == @expected
         else
-          @output[-2..-1].include? @expected
+          @output.include? @expected
         end
       end
     end
@@ -60,7 +61,9 @@ module OutputMatchers
     end
 
     def negative_failure_message
-      "didn't expect: #{@output.last.inspect}\n"
+      msg =  "Didn't expect: #{@output.inspect}\n"
+      msg << "   To contain: #{@expected.inspect}\n"
+      msg << @client.pretty_transcript
     end
   end
   

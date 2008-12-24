@@ -31,27 +31,18 @@ module Aeon
     end
   
     def say(str)
-      room.objects.each do |obj|
-        obj.display(%{#{name} says, "#{str}"})
-      end
+      to_room %{#{name} says, "#{str}"}, 
+              %{You say, "#{str}"}
     end
   
     def move(direction)
-      # TODO: encapsulate all of this display stuff into an Event class?
       if destination = room.send(direction)
-        old_room = room
-        
-        display("You move #{direction}.")
-        
-        destination.objects.each do |obj|
-          obj.display("#{name} enters from the #{Aeon::Room::OPPOSITES[direction]}.")
-        end
-        
+        to_room "#{name} moves to the #{direction}.", 
+                "You move #{direction}."
+                
         set_room(destination)
         
-        old_room.objects.each do |obj|
-          obj.display("#{name} exits to the #{direction}.")
-        end
+        to_room "#{name} enters from the #{Room::OPPOSITES[direction]}."
       else
         display("Alas, you cannot go that way.")
       end
@@ -59,18 +50,25 @@ module Aeon
     
     def set_room(new_room)
       raise "Tried to assign a nil room" unless new_room
-      return room if room == new_room
       
       room.objects.delete(self) if room
-      update_attributes(:room => new_room)
+      update_attributes(:room => new_room) unless room == new_room
       new_room.objects << self
       
       display(new_room.full_description)
+      
       new_room
     end
   
     def look(target=room)
+      display(target.full_description)
+    end
     
+    def to_room(to_others, to_self=nil)
+      Event.new :instigator => self,
+                :target     => room,
+                :message    => to_others,
+                :to_self    => to_self
     end
   
     def display(msg)

@@ -55,8 +55,8 @@ module Aeon
       @client = client
       @world  = Aeon::World.current_instance
       @world.add_player(self)
-      animate
       display "Welcome to Aeon, #{name}."
+      animate
     end
   
     def logout
@@ -109,7 +109,7 @@ module Aeon
     end
   
     command :look do
-      display @animated_object.room.full_description
+      @animated_object.look
     end
   
     command :raise do

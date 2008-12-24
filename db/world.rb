@@ -3,7 +3,6 @@ require AEON_ROOT + '/spec/factory'
 Factory.create(:player, :name => "Ethrin")
 Factory.create(:player, :name => "Halv")
 
-
 # r1 – r2 – r5
 #       |   |
 #      r3 – r4
