@@ -3,50 +3,38 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Aeon::Player, "[Integration]" do
   
   before(:each) do
-    @world = Aeon::World.new
-    @character = Aeon::Character.create(
-      :name => "TestPlayer"
-    )
-    @player = Aeon::Player.create(
-      :name      => "TestPlayer",
-      :password  => "secret",
-      :character => @character
-    )
+    @world  = Aeon::World.new
+    @player = Factory.build(:player)
+    @character = @player.character
     
     @client = MockClient.new
-    @client.login_to_player(@player)
   end
   
   def input(data)
     @client.receive_data(data)
   end
   
-  
-  describe "moving rooms" do
+  describe "navigating rooms" do
     before(:each) do
-      @room_start = Aeon::Room.new(
-        :name => 'Start Room',
-        :description => 'You are in the starting room.'
-      )
-      @room_east = Aeon::Room.new(
-        :name => 'Eastern Room',
-        :description => 'You are in the eastern room.'
-      )
-      @room_start.link(:east, @room_east)
+      @r1 = Aeon::Room.create(:name => "r1")
+      @r2 = @r1.bulldoze(:east, :name => "r2")
+      
+      @client.login_to_player(@player)
     end
-  
-    it "should display the room's description when moving" do
-      @character.room = @room_start
+    
+    it "should move between rooms" do
+      @character.room.should == @r1
+      @r1.objects.should include(@character)
+      @r2.objects.should_not include(@character)
+      
       input 'east'
-      @character.room.should == @room_east
-      @client.should be_displayed(@room_east.full_description)
+      
+      @character.room.should == @r2
+      @r1.objects.should_not include(@character)
+      @r2.objects.should include(@character)
+      
+      @client.should be_displayed(@r2.full_description)
     end
   end
   
-  # describe "commands" do
-  #   it "should show the who list" do
-  #     input 'who'
-  #     @client.should be_displayed "Asdfs"
-  #   end
-  # end
 end

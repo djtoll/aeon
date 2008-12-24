@@ -11,8 +11,6 @@ class MockClient
   
   attr_reader :transcript, :input, :output
 
-  # the transcript is an associative array of input and output
-  #   [[:input, 'foo'], [:output, 'bar']]
   def initialize
     @transcript = []
     @output     = []

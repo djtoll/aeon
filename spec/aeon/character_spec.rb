@@ -2,7 +2,6 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Aeon::Character do
   before(:each) do
-    # DataMapper.auto_migrate! # reset database after each example
     @player    = Aeon::Player.new(:name => "TestPlayer")
     @character = Aeon::Character.new(:name => "TestPlayer")
   end
@@ -18,5 +17,11 @@ describe Aeon::Character do
     @character.room = room
     @character.save
     @character.room.should == room
-  end  
+  end
+  
+  it "should set its room" do
+    room = Aeon::Room.create(:name => "Test Room")
+    @character.set_room(room)
+    @character.room.should == room
+  end
 end

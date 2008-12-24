@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'spec'
 
+require File.dirname(__FILE__) + '/factory'
+
 # require the Aeon library
 require File.dirname(__FILE__) + '/../lib/aeon'
 Aeon.mode = :test

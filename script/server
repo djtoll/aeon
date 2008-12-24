@@ -8,8 +8,7 @@ case ARGV.first
 when nil
   Aeon::Server.start
 when 'tt'
-  # Fork running the server off into a new process, so that we can replace
-  # this process with a tt++ session. ... Hey, it works.
-  fork { Aeon::Server.start }
+  # Start the server in a different thread so we can connect to it with tintin++.
+  Thread.new { Aeon::Server.start }
   system 'tt++ config/tt++.config'
 end

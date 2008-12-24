@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe Commandable do
+describe Aeon::Commandable do
   
   # Setting up the example class up front kinda sucks, but I had trouble
   # figuring out how to do it in isolation within each test.
   class CommandableThing
-    include Commandable
+    include Aeon::Commandable
     
     command :foo do
       "bar"

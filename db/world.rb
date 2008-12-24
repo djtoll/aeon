@@ -1,34 +1,36 @@
-@character = Aeon::Character.create(
-  :name => 'Ethrin'
-)
+require AEON_ROOT + '/spec/factory'
 
-@player = Aeon::Player.create(
-  :name => 'Ethrin',
-  :password => 'secret',
-  :character => @character
-)
+Factory.create(:player, :name => "Ethrin")
+Factory.create(:player, :name => "Halv")
 
 
-@character2 = Aeon::Character.create(
-  :name => 'Halv'
-)
-@player2 = Aeon::Player.create(
-  :name => 'Halv',
-  :password => 'secret',
-  :character => @character2
-)
+# r1 – r2 – r5
+#       |   |
+#      r3 – r4
 
-
-@room_start = Aeon::Room.create(
-  :name => "A Test Room",
+r1 = Aeon::Room.create(
+  :name        => "r1",
   :description => "You are in the test room!"
 )
 
-@room_east = Aeon::Room.create(
-  :name => "Another Test Room",
-  :description => "The eastern test room"
+r2 = r1.bulldoze(:east,
+  :name        => "r2",
+  :description => "The r2 room OMG!"
 )
 
-@room_start.link(:east, @room_east)
+r3 = r2.bulldoze(:south,
+  :name        => "r3",
+  :description => "Welcome to r3"
+)
 
-@character.update_attributes(:room => @room_start)
+r4 = r3.bulldoze(:east,
+  :name        => "r4",
+  :description => "OH HAI I'm r4"
+)
+
+r5 = r4.bulldoze(:north,
+  :name        => "r5",
+  :description => "I'm the very last room! wewt."
+)
+
+r5.bulldoze(:west)

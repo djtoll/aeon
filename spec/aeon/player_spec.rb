@@ -25,14 +25,14 @@ describe Aeon::Player, "controlling a character" do
   end
   
   it "should animate a character" do
+    @player.character.should_receive(:become_animated)
     @player.animate
-    @player.animated_object.should == @player.character
   end
   
   it "should deanimate a character" do
+    @player.character.should_receive(:become_animated)
     @player.animate
+    @player.character.should_receive(:become_deanimated)
     @player.deanimate
-    @player.animated_object.should == nil
-    @player.character.animator.should == nil
   end
 end
