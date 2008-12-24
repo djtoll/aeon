@@ -73,6 +73,7 @@ module Aeon
     # Links a room to a new room in the specified direction. If a room already
     # exists in that direction, it creates the link and returns that room.
     def bulldoze(direction, attrs={})
+      direction = direction.to_sym
       geom = case direction
         when :north
           [x, y+1, z, zone]
@@ -125,7 +126,36 @@ module Aeon
       when [ 0, 0,-1, zone]: :down
       end
     end
-  
+    
+    def draw_map(width=5, height=5)
+      rows = []
+      rows << "+" + ("-" * width) + "+"
+      
+      xbounds = x-(width/2)..x+(width/2)
+      ybounds = y-(height/2)..y+(height/2)
+      
+      rooms = Aeon::Room.all(:x => xbounds, :y => ybounds, :z => z, :zone => zone)
+      
+      ybounds.to_a.reverse.each do |pointy|
+        row = '|'
+        xbounds.each do |pointx|
+          if room = rooms.detect {|r| r.x == pointx && r.y == pointy}
+            room == self ? row << "o" : row << room.glyph
+          else
+            row << " "
+          end
+        end
+        rows << row + "|"
+      end
+      
+      rows << "+" + ("-" * width) + "+"
+      rows.join("\n") + "\n"
+    end
+
+    def glyph
+      " ".on_green
+    end
+    
     # Returns array of rooms tis room is linked to in this order: [n, e, s, w]
     def exits
       [north, east, south, west]
@@ -150,11 +180,13 @@ module Aeon
       @objects ||= []
     end
 
+    require 'colored'
+
     def full_description
-      str =  "#{name}\n"
-      str << "#{description}\n"
-      str << "Objects: #{objects.join(', ')}\n"
-      str << "Exits: [#{exit_list.join(', ')}]"
+      str =  "#{name}\n".bold
+      str << "#{description}\n\n"
+      str << "#{objects.join(', ')}\n"
+      str << "Exits: [#{exit_list.join(', ')}]".cyan
     end
     
     

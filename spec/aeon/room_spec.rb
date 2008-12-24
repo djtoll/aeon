@@ -164,7 +164,6 @@ describe Aeon::Room do
   end
   
   describe "bulldozing" do
-
     it "should create a link between the two rooms on bulldoze" do
       r1 = Aeon::Room.create(:name => "r1")
 
@@ -179,6 +178,25 @@ describe Aeon::Room do
       r1.bulldoze(:east).should == r2
       
       r1.east.should == r2
+    end
+  end
+  
+  describe "mapping" do
+    it "should mappify" do
+      @r1 = Aeon::Room.create
+      @r2 = @r1.bulldoze(:north)
+      @r3 = @r1.bulldoze(:east)
+      
+      the_map =  ""
+      the_map << "+-----+\n"
+      the_map << "|     |\n"
+      the_map << "|  +  |\n"
+      the_map << "|  o+ |\n"
+      the_map << "|     |\n"
+      the_map << "|     |\n"
+      the_map << "+-----+\n"
+      
+      @r1.draw_map.should == the_map
     end
   end
   

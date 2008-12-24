@@ -55,13 +55,13 @@ module Aeon
       update_attributes(:room => new_room) unless room == new_room
       new_room.objects << self
       
-      display(new_room.full_description)
+      look
       
       new_room
     end
   
     def look(target=room)
-      display(target.full_description)
+      display(room.draw_map(21, 9) + "\n" + target.full_description)
     end
     
     def to_room(to_others, to_self=nil)

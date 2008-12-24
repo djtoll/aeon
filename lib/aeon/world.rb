@@ -22,7 +22,7 @@ module Aeon
     end
   
     def add_player(player)
-      @players << player
+      @players << player unless @players.include?(player)
     end
   
     def remove_player(player)

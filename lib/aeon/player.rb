@@ -16,6 +16,7 @@ module Aeon
     # Override DM's table name, which would have been "aeon_players"
     @storage_names[:default] = "players"
   
+    attr_reader :animated_object
   
     include Commandable
   
@@ -90,7 +91,7 @@ module Aeon
     command :who do
       msg =  "Online Players:\n"
       msg << "---------------\n"
-      msg << @world.players.collect {|p| "#{p.name}\n"}.join
+      msg << @world.players.collect {|p| "#{p.name} (#{p.object_id})\n"}.join
       display msg
     end
   
@@ -118,6 +119,27 @@ module Aeon
   
     command :eval do |input|
       display(eval(input))
+    end
+    
+    command :bulldoze do |direction|
+      @animated_object.room.bulldoze(direction, :name => "A Bulldozed Room", :description => "It's all empty in here!")
+      @animated_object.move(direction.to_sym)
+    end
+    
+    command :summon do |summoned_name|
+      if player = @world.players.detect {|p| p.name == summoned_name}
+        player.animated_object.to_room(
+          "Suddenly, a glowing red portal opens and #{player.name} is sucked through!",
+          "You are sucked through the ether toward #{name}."
+        )
+        animated_object.to_room(
+          "Suddenly, #{player.name} appears through a glowing red portal, summoned by #{name}.",
+          "You summon #{player.name} through your magical portal."
+        )
+        player.animated_object.set_room(@animated_object.room)
+      else
+        display "No player found by that name."
+      end
     end
   
     

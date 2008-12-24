@@ -6,7 +6,9 @@ module Factory
     end
   
     def create(name, attrs={})
-      build(name, attrs).save
+      obj = build(name, attrs)
+      obj.save
+      obj
     end
   
   
