@@ -12,7 +12,7 @@ module Aeon
         World.new
       
         if Aeon.mode == :development
-          # Aeon::Loader.run
+          Aeon::Loader.run
           # DataMapper.logger.set_log(STDOUT, :debug)
           # DataMapper.logger.debug("Datamapper logging to STDOUT.")
         end

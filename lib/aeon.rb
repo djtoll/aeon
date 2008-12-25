@@ -1,3 +1,5 @@
+require 'matrix'
+
 require 'rubygems'
 require 'ruby-debug'
 
@@ -15,7 +17,7 @@ require 'aeon/dm-core_ext/identity_map'
 
 AEON_ROOT = File.expand_path(File.dirname(__FILE__) + "/..")
 
-require 'aeon/core_ext/module'
+require 'aeon/extensions'
 require 'aeon/logger'
 
 module Aeon
@@ -32,19 +34,20 @@ require 'aeon/loader'
 require 'aeon/color'
 require 'aeon/server'
 require 'aeon/client'
-require 'aeon/connector'
-require 'aeon/world'
-require 'aeon/room'
-require 'aeon/character'
-require 'aeon/commandable'
-require 'aeon/player'
-require 'aeon/event'
+# require 'aeon/connector'
+# require 'aeon/world'
+# require 'aeon/room'
+# require 'aeon/character'
+# require 'aeon/commandable'
+# require 'aeon/player'
+# require 'aeon/event'
 
-# Aeon::Loader.observe_files do |r|
-#   r.load 'aeon/connector'
-#   r.load 'aeon/world'
-#   r.load 'aeon/room'
-#   r.load 'aeon/character'
-#   r.load 'aeon/commandable'
-#   r.load 'aeon/player'
-# end
+Aeon::Loader.observe_files do |r|
+  r.load 'aeon/connector'
+  r.load 'aeon/world'
+  r.load 'aeon/room'
+  r.load 'aeon/character'
+  r.load 'aeon/commandable'
+  r.load 'aeon/player'
+  r.load 'aeon/event'
+end

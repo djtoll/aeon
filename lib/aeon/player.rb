@@ -56,6 +56,10 @@ module Aeon
       @client = client
       @world  = Aeon::World.current_instance
       @world.add_player(self)
+      # puts "#{name} has connected:"
+      # puts self.inspect
+      # puts @world.inspect
+      # puts
       display "Welcome to Aeon, #{name}."
       animate
     end
@@ -141,6 +145,21 @@ module Aeon
         display "No player found by that name."
       end
     end
+    
+    command :reboot do
+      Loader.reboot!
+    end
+    
+    command :objects do
+      str =  "Objects\n"
+      str << "------------\n"
+      str << "Worlds:     #{ObjectSpace.count(Aeon::World)}\n"
+      str << "Rooms:      #{ObjectSpace.count(Aeon::Room)}\n"
+      str << "Players:    #{ObjectSpace.count(Aeon::Player)}\n"
+      str << "Characters: #{ObjectSpace.count(Aeon::Character)}\n"
+      
+      display(str)
+    end
   
     
     # Delegator to Aeon::Client#display
@@ -160,7 +179,6 @@ module Aeon
       @client.reload!
       @client = nil
       deanimate if @animated_object
-      @world.remove_player(self)
     end
   end
 end

@@ -14,7 +14,7 @@ module Aeon
       end
     end
   
-    attr_reader   :players
+    attr_accessor :players
   
     def initialize
       Aeon::World.current_instance = self

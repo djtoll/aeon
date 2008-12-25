@@ -1,5 +1,3 @@
-require 'matrix'
-
 module Aeon
   class Room
     include DataMapper::Resource
@@ -127,6 +125,7 @@ module Aeon
       end
     end
     
+    
     def draw_map(width=5, height=5)
       rows = []
       rows << "+" + ("-" * width) + "+"
@@ -134,12 +133,15 @@ module Aeon
       xbounds = x-(width/2)..x+(width/2)
       ybounds = y-(height/2)..y+(height/2)
       
-      rooms = Aeon::Room.all(:x => xbounds, :y => ybounds, :z => z, :zone => zone)
+      rooms = {}
+      Aeon::Room.all(:x => xbounds, :y => ybounds, :z => z, :zone => zone).each do |r|
+        rooms[[r.x, r.y]] = r
+      end
       
       ybounds.to_a.reverse.each do |pointy|
         row = '|'
         xbounds.each do |pointx|
-          if room = rooms.detect {|r| r.x == pointx && r.y == pointy}
+          if room = rooms[[pointx,pointy]]
             room == self ? row << "o" : row << room.glyph
           else
             row << " "
