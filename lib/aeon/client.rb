@@ -19,9 +19,9 @@ module Aeon
       else
         @connector.handle_input(data)  
       end
-    rescue => e
-      # We want errors to be raised when Aeon is in test mode.
-      Aeon.mode == :test ? raise(e) : Aeon.logger.error(e)
+    # rescue => e
+    #   # We want errors to be raised when Aeon is in test mode.
+    #   Aeon.mode == :test ? raise(e) : Aeon.logger.error(e)
     end
   
     # Called when the client disconnects

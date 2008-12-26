@@ -3,11 +3,9 @@ module Aeon
   
     # Formats Errors into a pretty output.
     def error(e)
-      short_trace = e.backtrace
-      # short_trace = e.backtrace[0,3]
-      # short_trace << "...#{e.backtrace.length - 4} more levels..."
-      msg = [e.message, short_trace].join("\n\t")
-      World.current_instance.broadcast("[ERROR] #{msg}")
+      msg = "#{e.message}\n\t#{e.backtrace}"
+      world = World.current_instance
+      world ? world.broadcast("[ERROR] #{msg}") : puts(msg)
     end
   
     def debug(msg)
