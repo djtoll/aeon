@@ -127,34 +127,33 @@ module Aeon
     
     
     def draw_map(width=5, height=5)
-      rows = []
-      rows << "+#{'-'*width}+"
+      @cached_map ||= begin
+        rows = []
+        rows << "+#{'-'*width}+"
       
-      xbounds = x-(width/2)..x+(width/2)
-      ybounds = y-(height/2)..y+(height/2)
+        xbounds = x-(width/2)..x+(width/2)
+        ybounds = y-(height/2)..y+(height/2)
       
-      rooms = {}
-      repository.adapter.query('SELECT "x", "y" FROM "rooms" WHERE ("x" BETWEEN ?) AND ("y" BETWEEN ?) AND ("z" = ?) AND ("zone" = ?)', xbounds, ybounds, z, zone).each do |r|
-        rooms[[r.x, r.y]] = r
-      end
-      # Aeon::Room.all(:x => xbounds, :y => ybounds, :z => z, :zone => zone).each do |r|
-      #   rooms[[r.x, r.y]] = r
-      # end
-      
-      ybounds.to_a.reverse.each do |pointy|
-        row = '|'
-        xbounds.each do |pointx|
-          if room = rooms[[pointx,pointy]]
-            (x == pointx && y == pointy) ? row << "o" : row << " ".on_green
-          else
-            row << " "
-          end
+        rooms = {}
+        repository.adapter.query('SELECT "x", "y" FROM "rooms" WHERE ("x" BETWEEN ?) AND ("y" BETWEEN ?) AND ("z" = ?) AND ("zone" = ?)', xbounds, ybounds, z, zone).each do |r|
+          rooms[[r.x, r.y]] = r
         end
-        rows << row + "|"
-      end
       
-      rows << "+#{'-'*width}+"
-      rows.join("\n") + "\n"
+        ybounds.to_a.reverse.each do |pointy|
+          row = '|'
+          xbounds.each do |pointx|
+            if room = rooms[[pointx,pointy]]
+              (x == pointx && y == pointy) ? row << "o" : row << " ".on_green
+            else
+              row << " "
+            end
+          end
+          rows << row + "|"
+        end
+      
+        rows << "+#{'-'*width}+"
+        rows.join("\n") + "\n"
+      end
     end
     
     def glyph

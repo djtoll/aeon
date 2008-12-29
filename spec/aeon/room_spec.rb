@@ -80,7 +80,6 @@ describe Aeon::Room do
       
       lambda { @r1.link(@r2) }.should raise_error
     end
-    
   end
   
   describe "linking rooms in different zones" do
@@ -198,6 +197,15 @@ describe Aeon::Room do
       the_map << "+-----+\n"
       
       @r1.draw_map.should == the_map
+    end
+  end
+  
+  describe "objects" do
+    it "should add objects" do
+      @room = Aeon::Room.new
+      player = mock "Player"
+      @room.add_object(player)
+      @room.objects.should == [player]
     end
   end
   

@@ -14,14 +14,18 @@ module Aeon
   
     # Called when we receive data from the client
     def receive_data(data)
+      puts "From #{@player || @connector}:"
+      puts data.inspect.yellow
+      start_time = Time.now
       if @player
         @player.handle_input(data)
       else
-        @connector.handle_input(data)  
+        @connector.handle_input(data)
       end
-    # rescue => e
-    #   # We want errors to be raised when Aeon is in test mode.
-    #   Aeon.mode == :test ? raise(e) : Aeon.logger.error(e)
+      puts "Time: #{Time.now - start_time}\n\n"
+    rescue => e
+      # We want errors to be raised when Aeon is in test mode.
+      Aeon.mode == :test ? raise(e) : Aeon.logger.error(e)
     end
   
     # Called when the client disconnects
