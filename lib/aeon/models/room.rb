@@ -4,7 +4,7 @@ module Aeon
   
     property :id,           Integer, :serial => true
     property :name,         String
-    property :description,  Text
+    property :description,  Text, :lazy => false
     property :x,            Integer
     property :y,            Integer
     property :z,            Integer
@@ -126,10 +126,29 @@ module Aeon
     end
     
     
+    def self.to_rows
+      bounds = repository.adapter.query('SELECT min(x) AS topx, max(y) AS topy, max(x) AS bottomx, min(y) AS bottomy FROM rooms').first
+      
+      rooms = {}
+      repository.adapter.query('SELECT id, x, y, name, north_id, east_id, south_id, west_id FROM rooms ORDER BY x, y').each do |r|
+        rooms[[r.x, r.y]] = r
+      end
+      
+      rows = []
+      (bounds.bottomy..bounds.topy).to_a.reverse.each do |y|
+        row = []
+        (bounds.topx..bounds.bottomx).each do |x|
+          row << rooms[[x,y]]
+        end
+        rows << row
+      end
+      rows
+    end
+    
     def draw_map(width=5, height=5)
       @cached_map ||= begin
         rows = []
-        rows << "+#{'-'*width}+"
+        rows << "+#{'-'*(width*2)}+"
       
         xbounds = x-(width/2)..x+(width/2)
         ybounds = y-(height/2)..y+(height/2)
@@ -143,15 +162,15 @@ module Aeon
           row = '|'
           xbounds.each do |pointx|
             if room = rooms[[pointx,pointy]]
-              (x == pointx && y == pointy) ? row << "o" : row << " ".on_green
+              (x == pointx && y == pointy) ? row << "oo" : row << "  ".on_green
             else
-              row << " "
+              row << "  "
             end
           end
           rows << row + "|"
         end
       
-        rows << "+#{'-'*width}+"
+        rows << "+#{'-'*(width*2)}+"
         rows.join("\n") + "\n"
       end
     end
@@ -178,19 +197,16 @@ module Aeon
       exits.compact.empty?
     end
     
-    
-    
+
     def objects
       @objects ||= []
     end
 
-    require 'colored'
-
     def full_description
-      str =  "#{name}\n".bold
-      str << "#{description}\n\n"
-      str << "#{objects.join(', ')}\n"
-      str << "Exits: [#{exit_list.join(', ')}]".cyan
+      "#{name}".bold + " (#{object_id} - #{id})\n" +
+      "#{description}\n\n" +
+      "#{objects.join(', ')}\n" +
+      "Exits: [#{exit_list.join(', ')}]".cyan
     end
     
     

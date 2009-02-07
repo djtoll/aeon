@@ -1,0 +1,50 @@
+.map td {
+  width: 15px;
+  height: 15px;
+  padding: 1px; }
+  .map td a {
+    display: block;
+    width: 15px;
+    height: 15px; }
+.map td.room {
+  background-image: url(/images/room/room-bg.png);
+  background-position: 0px 0px;
+  background-repeat: no-repeat; }
+  .map td.room a {
+    background: green url(/images/room/room-grass.gif) repeat-x; }
+  .map td.room a:hover {
+    background: yellow; }
+.map td.room.n {
+  background-position: 0px -17px; }
+.map td.room.e {
+  background-position: 0px -34px; }
+.map td.room.s {
+  background-position: 0px -51px; }
+.map td.room.w {
+  background-position: 0px -68px; }
+.map td.room.ne {
+  background-position: 0px -85px; }
+.map td.room.ns {
+  background-position: 0px -102px; }
+.map td.room.nw {
+  background-position: 0px -119px; }
+.map td.room.es {
+  background-position: 0px -136px; }
+.map td.room.ew {
+  background-position: 0px -153px; }
+.map td.room.sw {
+  background-position: 0px -170px; }
+.map td.room.nes {
+  background-position: 0px -187px; }
+.map td.room.esw {
+  background-position: 0px -204px; }
+.map td.room.nsw {
+  background-position: 0px -221px; }
+.map td.room.new {
+  background-position: 0px -238px; }
+.map td.room.nesw {
+  background-position: 0px -255px; }
+.map td.current a {
+  background: red; }
+.map td.blank a:hover {
+  background: #ddd; }

@@ -7,32 +7,32 @@
 # If I decide to keep this functionality, it'll be refactored into a module.
 
 class Aeon::Connector
-  attr_reader :current_step
+  attr_reader :current_state
   
-  def self.step(step_name, &block)
-    @@steps ||= []
-    @@steps << step_name
-    define_method("#{step_name}?") { @current_step == step_name }
+  def self.state(state_name, &block)
+    @@states ||= []
+    @@states << state_name
+    define_method("#{state_name}?") { @current_state == state_name }
     
     block.call
   end
   
   def self.on_enter(&block)
-    define_method("#{@@steps.last.to_s}_on_enter", &block)
+    define_method("#{@@states.last.to_s}_on_enter", &block)
   end
   
   def self.on_input(&block)
-    define_method("#{@@steps.last.to_s}_on_input", &block)
+    define_method("#{@@states.last.to_s}_on_input", &block)
   end
   
-  def transition_to(step_name)
-    raise "Tried to transition to unknown step: #{@step_name}" unless @@steps.include?(step_name)
-    @current_step = step_name
-    send("#{@current_step}_on_enter")
+  def transition_to(state_name)
+    raise "Tried to transition to unknown state: #{@state_name}" unless @@states.include?(state_name)
+    @current_state = state_name
+    send("#{@current_state}_on_enter")
   end
   
   def handle_input(input)
-    send("#{@current_step}_on_input", input.chomp)
+    send("#{@current_state}_on_input", input.chomp)
   end
   
   
@@ -44,7 +44,7 @@ class Aeon::Connector
     transition_to :enter_name
   end
   
-  step :enter_name do
+  state :enter_name do
     on_enter do
       @client.prompt "What is your name, wanderer? > " 
     end
@@ -60,7 +60,7 @@ class Aeon::Connector
     end
   end
   
-  step :enter_password do
+  state :enter_password do
     on_enter do
       @client.prompt "OK, give me a password for #{@player_name} > "
     end
@@ -75,7 +75,7 @@ class Aeon::Connector
     end
   end
   
-  step :logged_in do
+  state :logged_in do
     on_enter do
       @client.login_to_player(@player)
     end

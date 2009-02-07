@@ -9,6 +9,7 @@ when nil
   Aeon::Server.start
 when 'tt'
   # Start the server in a different thread so we can connect to it with tintin++.
-  Thread.new { Aeon::Server.start }
+  server = Thread.new { Aeon::Server.start }
   system 'tt++ config/tt++.config'
+  server.join
 end

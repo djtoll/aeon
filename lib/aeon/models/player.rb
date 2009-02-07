@@ -1,6 +1,8 @@
 # The Player class acts as an interface between the human player and the MUD
 # character (Aeon::Character) that he/she controls.
 
+require 'terminal-table/import'
+
 module Aeon
   class Player
     include DataMapper::Resource
@@ -114,7 +116,7 @@ module Aeon
     end
   
     command :look do
-      @animated_object.look
+      @animated_object.look(@animated_object.room)
     end
   
     command :raise do
@@ -151,16 +153,23 @@ module Aeon
     end
     
     command :objects do
-      str =  "Objects\n"
-      str << "------------\n"
-      str << "Worlds:     #{ObjectSpace.count(Aeon::World)}\n"
-      str << "Rooms:      #{ObjectSpace.count(Aeon::Room)}\n"
-      str << "Players:    #{ObjectSpace.count(Aeon::Player)}\n"
-      str << "Characters: #{ObjectSpace.count(Aeon::Character)}\n"
+      t1 = table ['Class', 'Count']
+      [Aeon::World, Aeon::Room, Aeon::Player, Aeon::Character].each do |klass|
+        t1 << [klass.to_s, ObjectSpace.count(klass)]
+      end
       
-      display(str)
+      t2 = table ["Class", "Object", "ID", "to_s"]
+      [@animated_object, @animated_object.room].each do |obj|
+        t2 << [obj.class.to_s, obj.object_id, obj.id, obj.to_s]
+      end
+      
+      display("#{t1}\n#{t2}")
     end
   
+    command :reload do
+      @animated_object.room.reload
+      display "Reloaded Room #{@animated_object.room}"
+    end
     
     # Delegator to Aeon::Client#display
     # We also reprompt after each display unless told otherwise

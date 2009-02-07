@@ -61,7 +61,7 @@ module Aeon
     end
   
     def look(target=room)
-      display(room.draw_map(41, 19) + "\n" + target.full_description)
+      display(room.draw_map(19,15) + "\n" + target.full_description)
     end
     
     def to_room(to_others, to_self=nil)

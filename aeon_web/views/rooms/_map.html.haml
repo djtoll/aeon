@@ -1,0 +1,9 @@
+%table.map{:border => "0", :cellspacing => "0", :cellpadding => "0"}
+  -Aeon::Room.to_rows.each do |row|
+    %tr
+      -row.each do |room|
+        %td{:class => td_class(room)}
+          -if room
+            =link_to("", url(:edit_room, room.id)) 
+          -else
+            =link_to("", "#")

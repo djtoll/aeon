@@ -13,7 +13,8 @@ describe Aeon::VisualEvent do
     Aeon::VisualEvent.new :instigator => char1,
                           :target     => room,
                           :message    => "Ethrin lulz.",
-                          :to_self    => "You has a lulz!"
-      
+                          :to_self    => "You has a lulz!"   
   end
+  
+  
 end
